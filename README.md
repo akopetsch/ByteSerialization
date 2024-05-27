@@ -49,8 +49,8 @@ $ xxd car.bin
 00000000: 0443 6172 3100 0000 0902 4d46            .Car1.....MF
 ```
 
-| Bytes | Property | Property    | Value             |
-|-------|----------|-------------|-------------------|
+| Bytes       | Property         | Value             |
+|-------------|------------------|-------------------|
 | 04          | car.NameLength   | 4                 |
 | 43 61 72 31 | car.Name         | "Car1" in ASCII   |
 | 00 00 00 09 | car.Manufacturer | (pointer to mf)   |
