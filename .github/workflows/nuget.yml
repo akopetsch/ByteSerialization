@@ -56,15 +56,14 @@ jobs:
         
       - name: Publish NuGet package
         run: |
-          function Publish-Packages {
+          function Publish-Package {
             param (
-              [string]$extension
+              [string]$file
             )
-            $packages = Get-ChildItem "${{ env.NUGET_DIRECTORY }}" -Recurse -Include *$extension
-            foreach ($file in $packages) {
-              dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json
-            }
+            dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json
           }
 
-          Publish-Packages -extension ".nupkg"
-          Publish-Packages -extension ".snupkg"
+          $packages = Get-ChildItem "${{ env.NUGET_DIRECTORY }}" -Recurse -Include *.nupkg, *.snupkg
+          foreach ($file in $packages) {
+            Publish-Package -file $file.FullName
+          }
