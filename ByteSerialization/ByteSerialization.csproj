@@ -6,7 +6,7 @@
     <PackageProjectUrl>https://github.com/akopetsch/swe1r-assets</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>GPL-2.0-only</PackageLicenseExpression>
-    <PackageTags>Serialization;Serializer;Binary;Formt;Protocol</PackageTags>
+    <PackageTags>Serialization;Serializer;Binary;Format;Protocol</PackageTags>
     <Description>
       A declarative serialization library designed for bit-perfect control over binary representation.
       You can define C# classes like C structs by assigning attributes to classes and properties.
