@@ -12,7 +12,7 @@ on:
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
-  NUGET_DIRECTORY: ${{ github.workspace}}/nuget
+  NUGET_DIRECTORY: ${{ github.workspace }}/nuget
   ASSEMBLY_NAME: "ByteSerialization"
 
 defaults:
@@ -37,7 +37,9 @@ jobs:
         name: nuget
         if-no-files-found: error
         retention-days: 7
-        path: ${{ env.NUGET_DIRECTORY }}/*.nupkg
+        path: |
+          ${{ env.NUGET_DIRECTORY }}/*.nupkg
+          ${{ env.NUGET_DIRECTORY }}/*.snupkg
 
   deploy:
     if: github.event_name == 'release'
