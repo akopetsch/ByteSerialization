@@ -52,7 +52,7 @@ jobs:
           path: ${{ env.NUGET_DIRECTORY }}
           
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v4 # see global.json for version
         
       - name: Publish NuGet package
         run: |
