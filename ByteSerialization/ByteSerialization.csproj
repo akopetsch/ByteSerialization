@@ -16,6 +16,8 @@
     </Description>
     <RepositoryUrl>https://github.com/akopetsch/swe1r-assets</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup>
