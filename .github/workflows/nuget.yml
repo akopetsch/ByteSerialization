@@ -3,15 +3,8 @@
 # inspired by:
 # https://www.meziantou.net/publishing-a-nuget-package-following-best-practices-using-github.htm
 
-name: publish
+name: nuget
 on:
-  workflow_dispatch: # allow manual workflow execution (GitHub web UI)
-  push:
-    branches:
-      - 'main'
-  pull_request:
-    branches:
-      - '*' # all pull requests
   release:
     types:
       - published
