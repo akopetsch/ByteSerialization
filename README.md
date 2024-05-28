@@ -8,6 +8,8 @@ Inspired by [BinarySerializer](https://github.com/jefffhaynes/BinarySerializer) 
 
 This library was created from the ground up to support features like references/pointers.
 
+Notably, this libary is used by [swe1r-assets](https://github.com/akopetsch/swe1r-assets).
+
 ## Example
 
 Consider the following classes:
