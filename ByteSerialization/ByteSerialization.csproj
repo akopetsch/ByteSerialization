@@ -5,8 +5,8 @@
     <Nullable>disable</Nullable>
     <Authors>Alexander Kopetsch</Authors>
     <Version>0.1.0.0</Version>
-    <PackageVersion>0.1.0-alpha.5</PackageVersion>
-    <PackageProjectUrl>https://github.com/akopetsch/swe1r-assets</PackageProjectUrl>
+    <PackageVersion>0.1.0-alpha.6</PackageVersion>
+    <PackageProjectUrl>https://github.com/akopetsch/ByteSerialization</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>GPL-2.0-only</PackageLicenseExpression>
     <PackageTags>Serialization;Serializer;Binary;Format;Protocol</PackageTags>
@@ -15,7 +15,7 @@
       You can define C# classes like C structs by assigning attributes to classes and properties.
       Inspired by BinarySerializer by Jeff Haynes.
     </Description>
-    <RepositoryUrl>https://github.com/akopetsch/swe1r-assets</RepositoryUrl>
+    <RepositoryUrl>https://github.com/akopetsch/ByteSerialization</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
