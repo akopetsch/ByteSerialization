@@ -5,7 +5,7 @@
 using ByteSerialization.IO.Utils;
 using Xunit;
 
-namespace ByteSerialization.IO.Tests
+namespace ByteSerialization.Tests.IO.Utils
 {
     public class StructArrayComparerTest
     {

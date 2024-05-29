@@ -2,10 +2,11 @@
 // Licensed under GPLv2 or any later version
 // Refer to the included LICENSE.txt file.
 
+using ByteSerialization.IO;
 using ByteSerialization.IO.Utils;
 using Xunit;
 
-namespace ByteSerialization.IO.Tests
+namespace ByteSerialization.Tests.IO.Utils
 {
     public class BitsHelperTest
     {
@@ -49,13 +50,13 @@ namespace ByteSerialization.IO.Tests
         [Fact]
         public void Test_GetBitMask_1_MsbFirst() =>
             Assert.Equal(
-                expected: 0x80, 
+                expected: 0x80,
                 actual: BitsHelper.GetBitMask(0, BitOrder.MsbFirst));
 
         [Fact]
         public void Test_GetBitMask_1_LsbFirst() =>
             Assert.Equal(
-                expected: 0x01, 
+                expected: 0x01,
                 actual: BitsHelper.GetBitMask(0, BitOrder.LsbFirst));
 
         #endregion
@@ -63,10 +64,10 @@ namespace ByteSerialization.IO.Tests
         #region Methods (helper)
 
         private static bool[] GetBitsArray(
-            bool value0, bool value1, bool value2, bool value3, 
+            bool value0, bool value1, bool value2, bool value3,
             bool value4, bool value5, bool value6, bool value7) =>
-            new bool[] { 
-                value0, value1, value2, value3, 
+            new bool[] {
+                value0, value1, value2, value3,
                 value4, value5, value6, value7 };
 
         private static bool[] GetAllZeroesBitsArray() =>

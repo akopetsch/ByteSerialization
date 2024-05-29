@@ -5,7 +5,7 @@
 using ByteSerialization.IO.Extensions;
 using Xunit;
 
-namespace ByteSerialization.IO.Tests
+namespace ByteSerialization.Tests.IO.Extensions
 {
     public class SwapBytesTest
     {
