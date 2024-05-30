@@ -1,6 +1,5 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using ByteSerialization.IO.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,14 +65,14 @@ namespace ByteSerialization.IO
         public void Write(byte value) => writer.Write(value);
         public void Write(sbyte value) => writer.Write(value);
         public void Write(bool value) => writer.Write(value);
-        public void Write(short value) => writer.Write(value.SwapBytes());
-        public void Write(ushort value) => writer.Write(value.SwapBytes());
-        public void Write(int value) => writer.Write(value.SwapBytes());
-        public void Write(uint value) => writer.Write(value.SwapBytes());
-        public void Write(long value) => writer.Write(value.SwapBytes());
-        public void Write(ulong value) => writer.Write(value.SwapBytes());
+        public void Write(short value) => writer.Write(BytesSwapper.Swap(value));
+        public void Write(ushort value) => writer.Write(BytesSwapper.Swap(value));
+        public void Write(int value) => writer.Write(BytesSwapper.Swap(value));
+        public void Write(uint value) => writer.Write(BytesSwapper.Swap(value));
+        public void Write(long value) => writer.Write(BytesSwapper.Swap(value));
+        public void Write(ulong value) => writer.Write(BytesSwapper.Swap(value));
         public void Write(float value) => writer.Write(BitConverter.GetBytes(value).Reverse().ToArray());
-        public void Write(double value) => writer.Write(BitConverter.DoubleToInt64Bits(value).SwapBytes());
+        public void Write(double value) => writer.Write(BytesSwapper.Swap(BitConverter.DoubleToInt64Bits(value)));
         public void Write(decimal value) => throw new NotImplementedException();
         public void Write(char value) => writer.Write(value);
         public void Write(char[] value) => writer.Write(value);

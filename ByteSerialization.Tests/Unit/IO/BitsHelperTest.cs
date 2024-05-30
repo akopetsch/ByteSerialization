@@ -1,12 +1,9 @@
-﻿// Copyright 2024 Alexander Kopetsch
-// Licensed under GPLv2 or any later version
-// Refer to the included LICENSE.txt file.
+﻿// SPDX-License-Identifier: MIT
 
 using ByteSerialization.IO;
-using ByteSerialization.IO.Utils;
 using Xunit;
 
-namespace ByteSerialization.Tests.IO.Utils
+namespace ByteSerialization.Tests.Unit.IO
 {
     public class BitsHelperTest
     {
@@ -66,9 +63,10 @@ namespace ByteSerialization.Tests.IO.Utils
         private static bool[] GetBitsArray(
             bool value0, bool value1, bool value2, bool value3,
             bool value4, bool value5, bool value6, bool value7) =>
-            new bool[] {
+            [
                 value0, value1, value2, value3,
-                value4, value5, value6, value7 };
+                value4, value5, value6, value7
+            ];
 
         private static bool[] GetAllZeroesBitsArray() =>
             Enumerable.Repeat(false, BitsHelper.BitsPerByte).ToArray();

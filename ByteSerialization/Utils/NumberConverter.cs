@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ByteSerialization.Utilities
+namespace ByteSerialization.Utils
 {
     public class NumberConverter
     {

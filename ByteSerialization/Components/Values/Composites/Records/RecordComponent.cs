@@ -3,7 +3,7 @@
 using ByteSerialization.Attributes;
 using ByteSerialization.Nodes;
 using ByteSerialization.Pooling;
-using ByteSerialization.Utilities;
+using ByteSerialization.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;

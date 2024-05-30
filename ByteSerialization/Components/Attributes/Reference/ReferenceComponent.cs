@@ -4,7 +4,7 @@ using ByteSerialization.Components;
 using ByteSerialization.Components.Attributes.Reference;
 using ByteSerialization.Components.Values;
 using ByteSerialization.Extensions;
-using ByteSerialization.IO.Extensions;
+using ByteSerialization.IO;
 using ByteSerialization.Nodes;
 using System;
 
@@ -19,7 +19,7 @@ namespace ByteSerialization.Attributes.Reference
             if (Pointer.HasValue)
             {
                 string type = Type.GetFriendlyName();
-                string pointer = HasNullPointer ? "NULL" : $"0x{Pointer.Value.ToHexString()}";
+                string pointer = HasNullPointer ? "NULL" : $"0x{HexStringConverter.ToCompactHexString(Pointer.Value)}";
                 return $"{type} @ {pointer}";
             }
             else

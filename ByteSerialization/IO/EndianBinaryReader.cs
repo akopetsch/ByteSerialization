@@ -1,6 +1,5 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using ByteSerialization.IO.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,7 +56,8 @@ namespace ByteSerialization.IO
             funcs.Add(typeof(string), () => ReadString());
         }
 
-        public void Dispose() => reader.Close();
+        public void Dispose() => 
+            reader.Close();
 
         #endregion
 
@@ -67,12 +67,12 @@ namespace ByteSerialization.IO
         public byte ReadByte() => reader.ReadByte();
         public sbyte ReadSByte() => reader.ReadSByte();
         public char ReadChar() => reader.ReadChar();
-        public short ReadInt16() => reader.ReadInt16().SwapBytes();
-        public ushort ReadUInt16() => reader.ReadUInt16().SwapBytes();
-        public int ReadInt32() => reader.ReadInt32().SwapBytes();
-        public uint ReadUInt32() => reader.ReadUInt32().SwapBytes();
-        public long ReadInt64() => reader.ReadInt64().SwapBytes();
-        public ulong ReadUInt64() => reader.ReadUInt64().SwapBytes();
+        public short ReadInt16() => BytesSwapper.Swap(reader.ReadInt16());
+        public ushort ReadUInt16() => BytesSwapper.Swap(reader.ReadUInt16());
+        public int ReadInt32() => BytesSwapper.Swap(reader.ReadInt32());
+        public uint ReadUInt32() => BytesSwapper.Swap(reader.ReadUInt32());
+        public long ReadInt64() => BytesSwapper.Swap(reader.ReadInt64());
+        public ulong ReadUInt64() => BytesSwapper.Swap(reader.ReadUInt64());
         public float ReadSingle() => BitConverter.ToSingle(ReadBytes(sizeof(float)).Reverse().ToArray(), 0);
         public double ReadDouble() => BitConverter.ToDouble(ReadBytes(sizeof(double)).Reverse().ToArray(), 0);
         public decimal ReadDecimal() => ReadBytes(sizeof(decimal)).Reverse().ToArray().ToDecimal(0);

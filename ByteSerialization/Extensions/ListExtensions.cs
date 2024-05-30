@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace ByteSerialization.Extensions
 {
-    public static class ListExtensions
+    internal static class ListExtensions
     {
-        public static void AddRangeIfAny<T>(this List<T> list, IEnumerable<T> collection)
+        internal static void AddRangeIfAny<T>(this List<T> list, IEnumerable<T> collection)
         {
             if (collection.Any())
                 list.AddRange(collection);

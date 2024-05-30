@@ -6,24 +6,24 @@ using System.Linq;
 
 namespace ByteSerialization.Extensions
 {
-    public static class TypeExtensions
+    internal static class TypeExtensions
     {
-        public static bool Is<T>(this Type type) =>
+        internal static bool Is<T>(this Type type) =>
             typeof(T).IsAssignableFrom(type);
 
-        public static bool Is(this Type type, Type otherType) => 
+        internal static bool Is(this Type type, Type otherType) => 
             otherType.IsAssignableFrom(type);
 
-        public static bool IsOneOf<T1, T2>(this Type type) => 
+        internal static bool IsOneOf<T1, T2>(this Type type) => 
             type.IsOneOf(typeof(T1), typeof(T2));
 
-        public static bool IsOneOf(this Type type, params Type[] otherTypes) => 
+        internal static bool IsOneOf(this Type type, params Type[] otherTypes) => 
             otherTypes.Contains(type);
 
-        public static bool IsBuiltinList(this Type type) =>
+        internal static bool IsBuiltinList(this Type type) =>
             type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
 
-        public static string GetFriendlyName(this Type type)
+        internal static string GetFriendlyName(this Type type)
         {
             if (type.IsGenericType)
             {

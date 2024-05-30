@@ -1,11 +1,9 @@
-﻿// Copyright 2024 Alexander Kopetsch
-// Licensed under GPLv2 or any later version
-// Refer to the included LICENSE.txt file.
+﻿// SPDX-License-Identifier: MIT
 
-using ByteSerialization.IO.Utils;
+using ByteSerialization.IO;
 using Xunit;
 
-namespace ByteSerialization.Tests.IO.Utils
+namespace ByteSerialization.Tests.Unit.IO
 {
     public class StructArrayComparerTest
     {

@@ -1,7 +1,8 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using ByteSerialization.IO.Extensions;
+using ByteSerialization.IO;
 using ByteSerialization.Nodes;
+using ByteSerialization.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace ByteSerialization
     public class ByteSerializerContext
     {
         private string DebuggerDisplay =>
-            $"0x{Position.ToHexString()} | {Mode}";
+            $"0x{HexStringConverter.ToCompactHexString(Position)} | {Mode}";
 
         #region Properties
 
@@ -86,7 +87,7 @@ namespace ByteSerialization
             if (alignment != 0)
             {
                 long actual = Position;
-                long target = Position.Ceiling(alignment);
+                long target = CeilingHelper.Ceiling(Position, alignment);
                 ConsumeBytes(Convert.ToInt32(target - actual));
             }
         }

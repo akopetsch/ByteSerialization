@@ -2,9 +2,9 @@
 
 using System;
 
-namespace ByteSerialization.IO.Extensions
+namespace ByteSerialization.Utils
 {
-    public static class CeilingExtensions
+    public static class CeilingHelper
     {
         public static short Ceiling(this short value, short stepSize) =>
             Convert.ToInt16(Ceiling((long)value, stepSize));
@@ -12,7 +12,7 @@ namespace ByteSerialization.IO.Extensions
         public static int Ceiling(this int value, int stepSize) =>
             Convert.ToInt32(Ceiling((long)value, stepSize));
 
-        public static long Ceiling(this long value, long stepSize) => 
+        public static long Ceiling(this long value, long stepSize) =>
             Convert.ToInt64(Math.Ceiling((decimal)value / stepSize) * stepSize);
     }
 }

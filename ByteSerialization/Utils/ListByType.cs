@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ByteSerialization.Utilities
+namespace ByteSerialization.Utils
 {
     public class ListByType<T> : IList<T>, IPoolable
     {
@@ -132,7 +132,7 @@ namespace ByteSerialization.Utilities
 
         #endregion
 
-            #region Members (: IPoolable)
+        #region Members (: IPoolable)
 
         public event ReleaseEventHandler OnRelease;
 

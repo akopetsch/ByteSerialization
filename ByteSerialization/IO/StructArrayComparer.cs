@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace ByteSerialization.IO.Utils
+namespace ByteSerialization.IO
 {
-    public class StructArrayComparer
+    public static class StructArrayComparer
     {
         public class Difference<TItem>
             where TItem : struct

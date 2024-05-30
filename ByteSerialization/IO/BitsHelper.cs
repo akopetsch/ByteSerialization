@@ -2,7 +2,7 @@
 
 using System;
 
-namespace ByteSerialization.IO.Utils
+namespace ByteSerialization.IO
 {
     public static class BitsHelper
     {
@@ -26,8 +26,9 @@ namespace ByteSerialization.IO.Utils
                 throw new ArgumentOutOfRangeException(
                     nameof(bitIndex), $"Must be between {0} and {MaxBitIndex}");
 
-            return bitOrder switch {
-                BitOrder.MsbFirst => (byte)((1 << MaxBitIndex) >> bitIndex),
+            return bitOrder switch
+            {
+                BitOrder.MsbFirst => (byte)(1 << MaxBitIndex >> bitIndex),
                 BitOrder.LsbFirst => (byte)(1 << bitIndex),
                 _ => throw new ArgumentException("Must have a valid value.", nameof(bitOrder)),
             };

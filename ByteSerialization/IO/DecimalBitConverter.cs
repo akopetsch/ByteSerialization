@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace ByteSerialization.IO.Extensions
+namespace ByteSerialization.IO
 {
-    public static class DecimalExtensions
+    public static class DecimalBitConverter
     {
         public static decimal ToDecimal(this byte[] bytes, int startIndex)
         {

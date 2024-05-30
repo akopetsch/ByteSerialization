@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using ByteSerialization.Components.Values.Composites.Records;
-using ByteSerialization.Utilities;
+using ByteSerialization.Utils;
 using System;
 using System.Linq;
 

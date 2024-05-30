@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ByteSerialization.Utilities
+namespace ByteSerialization.Utils
 {
     public class TypeHierarchy : List<Type>
     {
