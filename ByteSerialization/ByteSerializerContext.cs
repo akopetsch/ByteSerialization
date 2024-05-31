@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using ByteSerialization.Components.Values;
 using ByteSerialization.IO;
 using ByteSerialization.Nodes;
 using ByteSerialization.Utils;
@@ -30,6 +31,7 @@ namespace ByteSerialization
         }
         public ByteSerializerGraph Graph { get; }
         public StringBuilder Log { get; }
+        internal ValueComponentFactory ValueComponentFactory { get; }
 
         #endregion
 
@@ -56,6 +58,7 @@ namespace ByteSerialization
             Mode = mode;
             Graph = new ByteSerializerGraph();
             Log = new StringBuilder();
+            ValueComponentFactory = new ValueComponentFactory(this);
         }
 
         #endregion

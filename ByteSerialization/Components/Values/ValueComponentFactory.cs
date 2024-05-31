@@ -11,12 +11,10 @@ namespace ByteSerialization.Components.Values
 {
     public class ValueComponentFactory
     {
-        #region Singleton
+        public ByteSerializerContext Context { get; }
 
-        public static ValueComponentFactory Instance { get; } = new ValueComponentFactory();
-        private ValueComponentFactory() { }
-
-        #endregion
+        public ValueComponentFactory(ByteSerializerContext context) =>
+            Context = context;
 
         public Type GetComponentType(Type type)
         {

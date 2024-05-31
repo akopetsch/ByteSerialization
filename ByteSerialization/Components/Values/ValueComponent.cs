@@ -33,7 +33,7 @@ namespace ByteSerialization.Components.Values
 
         public static ValueComponent AddValueComponent(this Node node, Type type)
         {
-            Type tvc = ValueComponentFactory.Instance.GetComponentType(type);
+            Type tvc = node.Context.ValueComponentFactory.GetComponentType(type);
             return (ValueComponent)node.Add(tvc);
         }
     }
