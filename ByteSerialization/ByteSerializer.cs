@@ -14,7 +14,7 @@ namespace ByteSerialization
         public void Serialize(Stream stream, object value, Endianness endianness, out ByteSerializerContext context)
         {
             using var w = new EndianBinaryWriter(stream, endianness);
-            var n = Node.CreateRoot(w, value);
+            var n = Node.CreateRoot(this, w, value);
             n.Serialize();
             context = n.Context;
         }
@@ -25,7 +25,7 @@ namespace ByteSerialization
         public T Deserialize<T>(Stream stream, Endianness endianness, out ByteSerializerContext context)
         {
             using var r = new EndianBinaryReader(stream, endianness);
-            var n = Node.CreateRoot(r, typeof(T));
+            var n = Node.CreateRoot(this, r, typeof(T));
             n.Deserialize();
             context = n.Context;
             return (T)n.Value;

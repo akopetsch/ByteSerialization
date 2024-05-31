@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Context = ByteSerialization.ByteSerializerContext;
 
 namespace ByteSerialization.Nodes
 {
@@ -115,7 +114,7 @@ namespace ByteSerialization.Nodes
 
         #region Properties
 
-        [DoNotNotify] public Context Context { get; private set; }
+        [DoNotNotify] public ByteSerializerContext Context { get; private set; }
         [DoNotNotify] public Node Parent { get; private set; }
         [DoNotNotify] public Node Root { get; private set; }
         [DoNotNotify] public NodeList Children { get; private set; }
@@ -175,13 +174,13 @@ namespace ByteSerialization.Nodes
 
         #region Methods (creation)
 
-        public static Node CreateRoot(EndianBinaryReader r, Type type) =>
-            CreateRoot(new Context(r), type);
+        public static Node CreateRoot(ByteSerializer serializer, EndianBinaryReader r, Type type) =>
+            CreateRoot(new ByteSerializerContext(serializer, r), type);
 
-        public static Node CreateRoot(EndianBinaryWriter w, object value) =>
-            CreateRoot(new Context(w), value.GetType(), value);
+        public static Node CreateRoot(ByteSerializer serializer, EndianBinaryWriter w, object value) =>
+            CreateRoot(new ByteSerializerContext(serializer, w), value.GetType(), value);
 
-        private static Node CreateRoot(Context context, Type type, object value = null)
+        private static Node CreateRoot(ByteSerializerContext context, Type type, object value = null)
         {
             Node n = UniversalPool.Instance.Get<Node>();
             n.Init(context, null, n);
@@ -202,7 +201,7 @@ namespace ByteSerialization.Nodes
             return n;
         }
 
-        private void Init(Context context, Node parent, Node root)
+        private void Init(ByteSerializerContext context, Node parent, Node root)
         {
             Context = context;
             Parent = parent;

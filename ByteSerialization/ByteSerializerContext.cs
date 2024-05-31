@@ -7,24 +7,22 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using Mode = ByteSerialization.ByteSerializerMode;
-using Reader = ByteSerialization.IO.EndianBinaryReader;
-using Writer = ByteSerialization.IO.EndianBinaryWriter;
 
 namespace ByteSerialization
 {
     [DebuggerDisplay("{" + nameof(DebuggerDisplay) + ",nq}")]
     public class ByteSerializerContext
     {
+        #region Properties
+
         private string DebuggerDisplay =>
             $"0x{HexStringConverter.ToCompactHexString(Position)} | {Mode}";
 
-        #region Properties
-
+        public ByteSerializer Serializer { get; }
         public Stream Stream { get; }
-        public Reader Reader { get; }
-        public Writer Writer { get; }
-        public Mode Mode { get; }
+        public EndianBinaryReader Reader { get; }
+        public EndianBinaryWriter Writer { get; }
+        public ByteSerializerMode Mode { get; }
         public long Position
         {
             get => Stream.Position;
@@ -37,9 +35,20 @@ namespace ByteSerialization
 
         #region Constructor
 
-        public ByteSerializerContext(Reader reader) : this(reader.BaseStream, reader, null, Mode.Deserializing) { }
-        public ByteSerializerContext(Writer writer) : this(writer.BaseStream, null, writer, Mode.Serializing) { }
-        private ByteSerializerContext(Stream stream, Reader reader, Writer writer, Mode mode)
+        public ByteSerializerContext(ByteSerializer serializer, EndianBinaryReader reader) : 
+            this(serializer, reader.BaseStream, reader, null, ByteSerializerMode.Deserializing)
+        { }
+
+        public ByteSerializerContext(ByteSerializer serializer, EndianBinaryWriter writer) : 
+            this(serializer, writer.BaseStream, null, writer, ByteSerializerMode.Serializing)
+        { }
+
+        private ByteSerializerContext(
+            ByteSerializer serializer, 
+            Stream stream, 
+            EndianBinaryReader reader, 
+            EndianBinaryWriter writer,
+            ByteSerializerMode mode)
         {
             Stream = stream;
             Reader = reader;
@@ -57,8 +66,10 @@ namespace ByteSerialization
         {
             switch (Mode)
             {
-                case Mode.Serializing: Writer.Write(new byte[n]); break;
-                case Mode.Deserializing: Reader.ReadBytes(n); break;
+                case ByteSerializerMode.Serializing:
+                    Writer.Write(new byte[n]); break;
+                case ByteSerializerMode.Deserializing:
+                    Reader.ReadBytes(n); break;
             }
         }
 
@@ -73,12 +84,10 @@ namespace ByteSerialization
             }
             else if (actual > target)
             {
-                if (Mode == Mode.Deserializing)
-                    // jump back to target
-                    Position = target;
+                if (Mode == ByteSerializerMode.Deserializing)
+                    Position = target; // jump back to target
                 else
-                    // not supported
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException(); // not supported
             }
         }
 
