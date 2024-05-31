@@ -3,6 +3,7 @@
 using ByteSerialization.Components.Values.Composites.Collections;
 using ByteSerialization.Components.Values.Composites.Records;
 using ByteSerialization.Components.Values.Customs;
+using ByteSerialization.Components.Values.CustomSerializers;
 using ByteSerialization.Components.Values.Primitives;
 using ByteSerialization.Extensions;
 using System;
@@ -18,6 +19,9 @@ namespace ByteSerialization.Components.Values
 
         public Type GetComponentType(Type type)
         {
+            if (Context.Serializer.GetCustomSerializer(type) != null)
+                return typeof(CustomSerializerComponent);
+
             if (type.IsValueType)
             {
                 if (Nullable.GetUnderlyingType(type)?.IsPrimitive == true)

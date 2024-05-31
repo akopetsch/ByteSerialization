@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using ByteSerialization.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,9 @@ namespace ByteSerialization.IO
         public Stream BaseStream { get; set; }
         public Endianness Endianness { get; set; }
         public ulong Count { get; private set; } = 0;
+
+        public bool IsBigEndian => Endianness == Endianness.BigEndian;
+        public bool IsLittleEndian => Endianness == Endianness.LittleEndian;
 
         #endregion
 
@@ -65,14 +69,14 @@ namespace ByteSerialization.IO
         public void Write(byte value) => writer.Write(value);
         public void Write(sbyte value) => writer.Write(value);
         public void Write(bool value) => writer.Write(value);
-        public void Write(short value) => writer.Write(BytesSwapper.Swap(value));
-        public void Write(ushort value) => writer.Write(BytesSwapper.Swap(value));
-        public void Write(int value) => writer.Write(BytesSwapper.Swap(value));
-        public void Write(uint value) => writer.Write(BytesSwapper.Swap(value));
-        public void Write(long value) => writer.Write(BytesSwapper.Swap(value));
-        public void Write(ulong value) => writer.Write(BytesSwapper.Swap(value));
-        public void Write(float value) => writer.Write(BitConverter.GetBytes(value).Reverse().ToArray());
-        public void Write(double value) => writer.Write(BytesSwapper.Swap(BitConverter.DoubleToInt64Bits(value)));
+        public void Write(short value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+        public void Write(ushort value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+        public void Write(int value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+        public void Write(uint value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+        public void Write(long value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+        public void Write(ulong value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+        public void Write(float value) => writer.Write(BitConverter.GetBytes(value).ReverseIf(IsBigEndian).ToArray());
+        public void Write(double value) => writer.Write(BytesSwapper.SwapIf(BitConverter.DoubleToInt64Bits(value), IsBigEndian));
         public void Write(decimal value) => throw new NotImplementedException();
         public void Write(char value) => writer.Write(value);
         public void Write(char[] value) => writer.Write(value);

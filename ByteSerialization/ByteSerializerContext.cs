@@ -52,6 +52,7 @@ namespace ByteSerialization
             EndianBinaryWriter writer,
             ByteSerializerMode mode)
         {
+            Serializer = serializer;
             Stream = stream;
             Reader = reader;
             Writer = writer;

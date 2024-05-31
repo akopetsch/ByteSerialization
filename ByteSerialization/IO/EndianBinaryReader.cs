@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using ByteSerialization.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,8 +23,11 @@ namespace ByteSerialization.IO
         #region Properties
 
         public Stream BaseStream { get; set; }
-        public Endianness Endianness { get; set; } // FIXME: not evaluated
+        public Endianness Endianness { get; set; }
         public ulong Count { get; private set; } = 0;
+
+        public bool IsBigEndian => Endianness == Endianness.BigEndian;
+        public bool IsLittleEndian => Endianness == Endianness.LittleEndian;
 
         #endregion
 
@@ -67,15 +71,15 @@ namespace ByteSerialization.IO
         public byte ReadByte() => reader.ReadByte();
         public sbyte ReadSByte() => reader.ReadSByte();
         public char ReadChar() => reader.ReadChar();
-        public short ReadInt16() => BytesSwapper.Swap(reader.ReadInt16());
-        public ushort ReadUInt16() => BytesSwapper.Swap(reader.ReadUInt16());
-        public int ReadInt32() => BytesSwapper.Swap(reader.ReadInt32());
-        public uint ReadUInt32() => BytesSwapper.Swap(reader.ReadUInt32());
-        public long ReadInt64() => BytesSwapper.Swap(reader.ReadInt64());
-        public ulong ReadUInt64() => BytesSwapper.Swap(reader.ReadUInt64());
-        public float ReadSingle() => BitConverter.ToSingle(ReadBytes(sizeof(float)).Reverse().ToArray(), 0);
-        public double ReadDouble() => BitConverter.ToDouble(ReadBytes(sizeof(double)).Reverse().ToArray(), 0);
-        public decimal ReadDecimal() => ReadBytes(sizeof(decimal)).Reverse().ToArray().ToDecimal(0);
+        public short ReadInt16() => BytesSwapper.SwapIf(reader.ReadInt16(), IsBigEndian);
+        public ushort ReadUInt16() => BytesSwapper.SwapIf(reader.ReadUInt16(), IsBigEndian);
+        public int ReadInt32() => BytesSwapper.SwapIf(reader.ReadInt32(), IsBigEndian);
+        public uint ReadUInt32() => BytesSwapper.SwapIf(reader.ReadUInt32(), IsBigEndian);
+        public long ReadInt64() => BytesSwapper.SwapIf(reader.ReadInt64(), IsBigEndian);
+        public ulong ReadUInt64() => BytesSwapper.SwapIf(reader.ReadUInt64(), IsBigEndian);
+        public float ReadSingle() => BitConverter.ToSingle(ReadBytes(sizeof(float)).ReverseIf(IsBigEndian).ToArray(), 0);
+        public double ReadDouble() => BitConverter.ToDouble(ReadBytes(sizeof(double)).ReverseIf(IsBigEndian).ToArray(), 0);
+        public decimal ReadDecimal() => ReadBytes(sizeof(decimal)).ReverseIf(IsBigEndian).ToArray().ToDecimal(0);
         public byte[] ReadBytes(int count) => reader.ReadBytes(count);
         public char[] ReadChars(int count) => reader.ReadChars(count);
         public string ReadString() => throw new NotImplementedException();

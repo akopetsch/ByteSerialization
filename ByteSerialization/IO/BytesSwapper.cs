@@ -29,6 +29,14 @@ namespace ByteSerialization.IO
         public static ushort Swap(ushort x) =>
             (ushort)(x << 8 | (byte)(x >> 8));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static short SwapIf(short x, bool condition) =>
+            condition ? Swap(x) : x;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort SwapIf(ushort x, bool condition) =>
+            condition ? Swap(x) : x;
+
         #endregion
 
         #region Methods (int/uint)
@@ -43,6 +51,14 @@ namespace ByteSerialization.IO
             /* 2 */ x << 8 & mask2 |
             /* 1 */ x >> 8 & mask1 |
             /* 0 */ x >> 24;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SwapIf(int x, bool condition) =>
+            condition ? Swap(x) : x;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint SwapIf(uint x, bool condition) =>
+            condition ? Swap(x) : x;
 
         #endregion
 
@@ -62,6 +78,14 @@ namespace ByteSerialization.IO
             /* 2 */ x >> 24 & mask2 |
             /* 1 */ x >> 40 & mask1 |
             /* 0 */ x >> 56;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long SwapIf(long x, bool condition) =>
+            condition ? Swap(x) : x;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong SwapIf(ulong x, bool condition) =>
+            condition ? Swap(x) : x;
 
         #endregion
     }
