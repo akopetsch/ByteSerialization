@@ -4,7 +4,7 @@ using System;
 
 namespace ByteSerialization.Components.Values.Primitives
 {
-    public class EnumComponent : PrimitiveComponent
+    public class EnumPrimitiveComponent : PrimitiveComponent
     {
         private Type UnderlyingType { get; set; }
         

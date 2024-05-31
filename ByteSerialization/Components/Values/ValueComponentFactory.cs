@@ -2,7 +2,7 @@
 
 using ByteSerialization.Components.Values.Composites.Collections;
 using ByteSerialization.Components.Values.Composites.Records;
-using ByteSerialization.Components.Values.Customs;
+using ByteSerialization.Components.Values.CustomSerializables;
 using ByteSerialization.Components.Values.CustomSerializers;
 using ByteSerialization.Components.Values.Primitives;
 using ByteSerialization.Extensions;
@@ -29,11 +29,11 @@ namespace ByteSerialization.Components.Values
                 if (type.IsPrimitive)
                     return typeof(PrimitiveComponent);
                 if (type.IsEnum)
-                    return typeof(EnumComponent);
+                    return typeof(EnumPrimitiveComponent);
             }
 
             if (typeof(ICustomSerializable).IsAssignableFrom(type))
-                return typeof(CustomComponent);
+                return typeof(CustomSerializableComponent);
 
             if (type.IsArray)
                 return typeof(ArrayComponent);
