@@ -8,12 +8,25 @@ using System.IO;
 
 namespace ByteSerialization
 {
-    public class ByteSerializer
+    public class ByteSerializer : IDisposable
     {
         #region Fields
 
         private readonly Dictionary<Type, ICustomSerializer> _customSerializers = 
             new Dictionary<Type, ICustomSerializer>();
+
+        private EndianBinaryReader _reader;
+        private EndianBinaryWriter _writer;
+
+        #endregion
+
+        #region Methods (: IDisposable)
+
+        public void Dispose()
+        {
+            _reader?.Dispose();
+            _writer?.Dispose();
+        }
 
         #endregion
 
@@ -48,8 +61,9 @@ namespace ByteSerialization
 
         public T Deserialize<T>(Stream stream, Endianness endianness, out ByteSerializerContext context)
         {
-            using var r = new EndianBinaryReader(stream, endianness);
-            var n = Node.CreateRoot(this, r, typeof(T));
+            _reader?.Dispose();
+            _reader = new EndianBinaryReader(stream, endianness);
+            var n = Node.CreateRoot(this, _reader, typeof(T));
             n.Deserialize();
             context = n.Context;
             return (T)n.Value;
@@ -74,8 +88,9 @@ namespace ByteSerialization
 
         public void Serialize(Stream stream, object value, Endianness endianness, out ByteSerializerContext context)
         {
-            using var w = new EndianBinaryWriter(stream, endianness);
-            var n = Node.CreateRoot(this, w, value);
+            _writer?.Dispose();
+            _writer = new EndianBinaryWriter(stream, endianness);
+            var n = Node.CreateRoot(this, _writer, value);
             n.Serialize();
             context = n.Context;
         }
