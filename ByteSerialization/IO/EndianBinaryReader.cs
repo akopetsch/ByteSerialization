@@ -61,7 +61,7 @@ namespace ByteSerialization.IO
         }
 
         public void Dispose() => 
-            reader.Close();
+            reader.Dispose();
 
         #endregion
 

@@ -60,7 +60,8 @@ namespace ByteSerialization.IO
             funcs.Add(typeof(string), x => Write((string)x));
         }
 
-        public void Dispose() => writer.Close();
+        public void Dispose() => 
+            writer.Dispose();
 
         #endregion
 
