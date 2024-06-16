@@ -2,13 +2,14 @@
 
 using ByteSerialization.Attributes;
 using ByteSerialization.IO;
-using Xunit;
 
 namespace ByteSerialization.Tests.Integration
 {
-    public class SimpleIntegrationTest
+    public class ComplexIntegrationTest : IntegrationTestBase
     {
-        public class LengthPrefixedString
+        #region Classes
+
+        private class LengthPrefixedString
         {
             [Order(0)]
             public byte Length { get; set; }
@@ -25,7 +26,7 @@ namespace ByteSerialization.Tests.Integration
             }
         }
 
-        public class Manufacturer
+        private class Manufacturer
         {
             [Order(0)]
             public LengthPrefixedString Name { get; set; }
@@ -38,7 +39,7 @@ namespace ByteSerialization.Tests.Integration
             }
         }
 
-        public class Car
+        private class Car
         {
             [Order(0)]
             public LengthPrefixedString Name { get; set; }
@@ -55,21 +56,22 @@ namespace ByteSerialization.Tests.Integration
             }
         }
 
-        [Fact]
-        public void Test()
-        {
-            // setup
-            var manufacturer = new Manufacturer("MF");
-            var car = new Car("Car1", manufacturer);
-            
-            // serialize
-            using var ms = new MemoryStream();
-            new ByteSerializer().Serialize(ms, car, Endianness.BigEndian);
+        #endregion
 
-            // compare
-            byte[] expected = HexStringConverter.ToByteArray("0443 6172 3100 0000 0902 4d46"); // .Car1.....MF
-            byte[] actual = ms.ToArray();
-            Assert.True(expected.SequenceEqual(actual));
+        #region Properties
+
+        protected override object TestObject
+        {
+            get
+            {
+                var manufacturer = new Manufacturer("MF");
+                return new Car("Car1", manufacturer);
+            }
         }
+
+        protected override byte[] TestObjectBytes =>
+            HexStringConverter.ToByteArray("0443 6172 3100 0000 0902 4d46"); // .Car1.....MF
+
+        #endregion
     }
 }

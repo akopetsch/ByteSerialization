@@ -85,8 +85,11 @@ namespace ByteSerialization.IO
         public void Write(byte[] value) => writer.Write(value);
         public void Write(object value) => funcs[value.GetType()].Invoke(value);
 
-        public WriteFunc GetFunc(Type t) => funcs[t];
-        private void WriteObject(object value) => funcs[value.GetType()].Invoke(value);
+        public WriteFunc GetFunc(Type t) =>
+            funcs[t];
+
+        private void WriteObject(object value) =>
+            funcs[value.GetType()].Invoke(value);
 
         public void WriteAndReset(object value)
         {
