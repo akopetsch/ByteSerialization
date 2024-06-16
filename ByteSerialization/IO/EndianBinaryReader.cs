@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using ByteSerialization.Components.Values.Primitives;
 using ByteSerialization.Extensions;
 using System;
 using System.Collections.Generic;
@@ -94,14 +95,39 @@ namespace ByteSerialization.IO
             return array;
         }
 
-        public ReadFunc GetFunc(Type t) => funcs[t];
-        public object Read(Type t) => funcs[t].Invoke();
-        public T Read<T>() => (T)Read(typeof(T));
+        public T Read<T>() =>
+            (T)Read(typeof(T));
+
+        public object Read(Type t)
+        {
+            if (t.IsValueType)
+            {
+                Type underlyingNullableType = Nullable.GetUnderlyingType(t);
+                if (underlyingNullableType?.IsPrimitive == true)
+                    return Read(underlyingNullableType);
+                else if (t.IsEnum)
+                    return Enum.ToObject(t, ReadPrimitiveType(Enum.GetUnderlyingType(t)));
+                else if (t.IsPrimitive)
+                    return ReadPrimitiveType(t);
+            }
+            throw new ArgumentException();
+        }
+
+        private object ReadPrimitiveType(Type t) =>
+            funcs[t].Invoke();
+
+        #endregion
+
+        #region Methods (Peek...)
 
         public T Peek<T>() => (T)Peek(typeof(T));
         public object Peek(Type t) => AtPosition(BaseStream.Position, r => r.Read(t));
         public byte[] PeekBytes(int count) => AtPosition(BaseStream.Position, r => r.ReadBytes(count));
         public char[] PeekChars(int count) => AtPosition(BaseStream.Position, r => r.ReadChars(count));
+
+        #endregion
+
+        #region Methods (AtPosition(...))
 
         public T AtPosition<T>(long position, Func<EndianBinaryReader, T> action)
         {

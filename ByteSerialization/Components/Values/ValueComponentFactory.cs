@@ -22,15 +22,8 @@ namespace ByteSerialization.Components.Values
             if (Context.Serializer.GetCustomSerializer(type) != null)
                 return typeof(CustomSerializerComponent);
 
-            if (type.IsValueType)
-            {
-                if (Nullable.GetUnderlyingType(type)?.IsPrimitive == true)
-                    return typeof(NullablePrimitiveComponent);
-                if (type.IsPrimitive)
-                    return typeof(PrimitiveComponent);
-                if (type.IsEnum)
-                    return typeof(EnumPrimitiveComponent);
-            }
+            if (type.GetUnderlyingTypeOrSelf()?.IsPrimitive ?? false)
+                return typeof(PrimitiveComponent);
 
             if (typeof(ICustomSerializable).IsAssignableFrom(type))
                 return typeof(CustomSerializableComponent);
@@ -42,7 +35,7 @@ namespace ByteSerialization.Components.Values
             if (type.IsClass)
                 return typeof(RecordComponent);
 
-            throw new InvalidOperationException();
+            throw new ArgumentException();
         }
     }
 }

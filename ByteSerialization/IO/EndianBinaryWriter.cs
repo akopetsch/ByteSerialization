@@ -83,20 +83,37 @@ namespace ByteSerialization.IO
         public void Write(char[] value) => writer.Write(value);
         public void Write(string value) => writer.Write(value);
         public void Write(byte[] value) => writer.Write(value);
-        public void Write(object value) => funcs[value.GetType()].Invoke(value);
 
-        public WriteFunc GetFunc(Type t) =>
-            funcs[t];
-
-        private void WriteObject(object value) =>
-            funcs[value.GetType()].Invoke(value);
-
-        public void WriteAndReset(object value)
+        public void Write(object value)
         {
-            AtPosition(
-                BaseStream.Position,
-                w => w.Write(value));
+            Type t = value.GetType();
+            if (t.IsValueType)
+            {
+                Type underlyingNullableType = Nullable.GetUnderlyingType(t);
+                if (underlyingNullableType?.IsPrimitive == true)
+                {
+                    object underlyingValue = Convert.ChangeType(value, underlyingNullableType);
+                    WritePrimitiveType(underlyingValue);
+                    return;
+                }
+                else if (t.IsEnum)
+                {
+                    Type underlyingEnumType = Enum.GetUnderlyingType(t);
+                    object underlyingValue = Convert.ChangeType(value, underlyingEnumType);
+                    WritePrimitiveType(underlyingValue);
+                    return;
+                }
+                else if (t.IsPrimitive)
+                {
+                    WritePrimitiveType(value);
+                    return;
+                }
+            }
+            throw new ArgumentException();
         }
+
+        public void WritePrimitiveType(object value) =>
+            funcs[value.GetType()].Invoke(value);
 
         public void AtPosition(long position, Action<EndianBinaryWriter> action)
         {
