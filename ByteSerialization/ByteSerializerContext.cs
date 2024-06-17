@@ -73,7 +73,7 @@ namespace ByteSerialization
                 case ByteSerializerMode.Serializing:
                     Writer.Write(new byte[n]); break;
                 case ByteSerializerMode.Deserializing:
-                    Reader.ReadBytes(n); break;
+                    Reader.Read<byte>(n); break;
             }
         }
 

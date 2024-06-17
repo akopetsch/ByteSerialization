@@ -4,7 +4,7 @@ using ByteSerialization.Components.Values.Composites.Collections;
 using ByteSerialization.Components.Values.Composites.Records;
 using ByteSerialization.Components.Values.CustomSerializables;
 using ByteSerialization.Components.Values.CustomSerializers;
-using ByteSerialization.Components.Values.Primitives;
+using ByteSerialization.Components.Values.BasicSerializables;
 using ByteSerialization.Extensions;
 using System;
 
@@ -22,9 +22,8 @@ namespace ByteSerialization.Components.Values
             if (Context.Serializer.GetCustomSerializer(type) != null)
                 return typeof(CustomSerializerComponent);
 
-            if (type.IsPrimitiveOrEnum() ||
-                (Nullable.GetUnderlyingType(type)?.IsPrimitiveOrEnum() ?? false))
-                return typeof(PrimitiveComponent);
+            if (type.IsBasicSerializable())
+                return typeof(BasicSerializableComponent);
 
             if (typeof(ICustomSerializable).IsAssignableFrom(type))
                 return typeof(CustomSerializableComponent);

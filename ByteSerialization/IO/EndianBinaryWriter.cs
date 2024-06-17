@@ -4,18 +4,15 @@ using ByteSerialization.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace ByteSerialization.IO
 {
-    // TODO: make this class more like BinaryWriter
-
     public class EndianBinaryWriter : IDisposable
     {
         #region Fields
 
         private readonly BinaryWriter _writer;
-        private readonly Dictionary<Type, WriteFunc> _writeFuncs = 
+        private readonly Dictionary<Type, WriteFunc> _primitiveWriteFuncs = 
             new Dictionary<Type, WriteFunc>();
 
         #endregion
@@ -44,7 +41,7 @@ namespace ByteSerialization.IO
             Endianness = endianness;
 
             _writer = new BinaryWriter(stream);
-            InitWriteFuncs();
+            InitPrimitiveWriteFuncs();
         }
 
         #endregion
@@ -60,22 +57,22 @@ namespace ByteSerialization.IO
 
         #region Methods (initialization)
 
-        private void InitWriteFuncs()
+        private void InitPrimitiveWriteFuncs()
         {
-            _writeFuncs.Add(typeof(bool), x => Write((bool)x));
-            _writeFuncs.Add(typeof(byte), x => Write((byte)x));
-            _writeFuncs.Add(typeof(sbyte), x => Write((sbyte)x));
-            _writeFuncs.Add(typeof(short), x => Write((short)x));
-            _writeFuncs.Add(typeof(ushort), x => Write((ushort)x));
-            _writeFuncs.Add(typeof(int), x => Write((int)x));
-            _writeFuncs.Add(typeof(uint), x => Write((uint)x));
-            _writeFuncs.Add(typeof(long), x => Write((long)x));
-            _writeFuncs.Add(typeof(ulong), x => Write((ulong)x));
-            _writeFuncs.Add(typeof(float), x => Write((float)x));
-            _writeFuncs.Add(typeof(double), x => Write((double)x));
-            _writeFuncs.Add(typeof(decimal), x => Write((decimal)x));
-            _writeFuncs.Add(typeof(char), x => Write((char)x));
-            _writeFuncs.Add(typeof(string), x => Write((string)x));
+            _primitiveWriteFuncs.Add(typeof(bool), x => Write((bool)x));
+            _primitiveWriteFuncs.Add(typeof(byte), x => Write((byte)x));
+            _primitiveWriteFuncs.Add(typeof(sbyte), x => Write((sbyte)x));
+            _primitiveWriteFuncs.Add(typeof(short), x => Write((short)x));
+            _primitiveWriteFuncs.Add(typeof(ushort), x => Write((ushort)x));
+            _primitiveWriteFuncs.Add(typeof(int), x => Write((int)x));
+            _primitiveWriteFuncs.Add(typeof(uint), x => Write((uint)x));
+            _primitiveWriteFuncs.Add(typeof(long), x => Write((long)x));
+            _primitiveWriteFuncs.Add(typeof(ulong), x => Write((ulong)x));
+            _primitiveWriteFuncs.Add(typeof(float), x => Write((float)x));
+            _primitiveWriteFuncs.Add(typeof(double), x => Write((double)x));
+            _primitiveWriteFuncs.Add(typeof(decimal), x => Write((decimal)x));
+            _primitiveWriteFuncs.Add(typeof(char), x => Write((char)x));
+            _primitiveWriteFuncs.Add(typeof(string), x => Write((string)x));
         }
 
         #endregion
@@ -118,12 +115,9 @@ namespace ByteSerialization.IO
         public void Write(double value) =>
             _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
 
-        public void WritePrimitiveType(object value) =>
-            _writeFuncs[value.GetType()].Invoke(value);
-
         #endregion
 
-        #region Methods (Write(...); other value types)
+        #region Methods (Write(...); other types)
 
         public void Write(decimal value) =>
             throw new NotImplementedException();
@@ -133,44 +127,49 @@ namespace ByteSerialization.IO
 
         #endregion
 
-        #region Methods (Write(...); array types)
-
-        public void Write(char[] value) =>
-            _writer.Write(value);
-
-        public void Write(byte[] value) =>
-            _writer.Write(value);
-
-        #endregion
-
         #region Write (Write(...); object values)
 
         public void Write(object value)
         {
-            Type t = value.GetType();
-            if (t.IsValueType)
+            Type type = value.GetType();
+            if (!type.IsBasicSerializableOrArray())
+                throw new ArgumentException();
+
+            if (type.IsArray)
             {
-                Type underlyingNullableType = Nullable.GetUnderlyingType(t);
+                if (value is byte[] byteArray)
+                    _writer.Write(byteArray);
+                else
+                {
+                    var array = value as Array;
+                    for (int i = 0; i < array.Length; i++)
+                        Write(array.GetValue(i));
+                }
+            }
+            else
+            {
+                Type underlyingNullableType = Nullable.GetUnderlyingType(type);
                 if (underlyingNullableType?.IsPrimitiveOrEnum() ?? false)
                 {
                     object underlyingValue = Convert.ChangeType(value, underlyingNullableType);
                     Write(underlyingValue);
                     return;
                 }
-                else if (t.IsEnum)
+                else if (type.IsEnum)
                 {
-                    Type underlyingEnumType = Enum.GetUnderlyingType(t);
+                    Type underlyingEnumType = Enum.GetUnderlyingType(type);
                     object underlyingValue = Convert.ChangeType(value, underlyingEnumType);
                     Write(underlyingValue);
                     return;
                 }
-                else if (t.IsPrimitive)
+                else if (type.IsPrimitive)
                 {
-                    WritePrimitiveType(value);
+                    _primitiveWriteFuncs[value.GetType()].Invoke(value);
                     return;
                 }
+                else
+                    throw new InvalidOperationException();
             }
-            throw new ArgumentException();
         }
 
         #endregion

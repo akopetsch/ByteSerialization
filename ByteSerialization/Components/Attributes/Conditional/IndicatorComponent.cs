@@ -30,7 +30,7 @@ namespace ByteSerialization.Attributes.Conditional
 
             // get actual indicator
             int n = target.Length;
-            byte[] bytes = Reader.ReadBytes(n);
+            byte[] bytes = Reader.Read<byte>(n);
             char[] chars = bytes.Select(b => (char)b).ToArray();
             var actual = new string(chars);
 

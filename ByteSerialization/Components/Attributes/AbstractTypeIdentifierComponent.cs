@@ -82,7 +82,7 @@ namespace ByteSerialization.Attributes
                 else
                 {
                     int length = lengths.Single();
-                    byte[] readBytes = Reader.ReadBytes(length);
+                    byte[] readBytes = Reader.Read<byte>(length);
                     readValue = Encoding.UTF8.GetString(readBytes);
                 }
             }

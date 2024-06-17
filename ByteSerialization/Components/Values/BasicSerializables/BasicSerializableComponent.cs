@@ -1,8 +1,8 @@
 ﻿// SPDX-License-Identifier: MIT
 
-namespace ByteSerialization.Components.Values.Primitives
+namespace ByteSerialization.Components.Values.BasicSerializables
 {
-    public class PrimitiveComponent : ValueComponent
+    public class BasicSerializableComponent : ValueComponent
     {
         public override void Serialize() =>
             Writer.Write(Node.Value);

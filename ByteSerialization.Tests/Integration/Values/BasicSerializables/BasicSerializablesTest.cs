@@ -3,9 +3,9 @@
 using ByteSerialization.IO;
 using ByteSerialization.Tests.Integration.TestObjects;
 
-namespace ByteSerialization.Tests.Integration.Primitives
+namespace ByteSerialization.Tests.Integration.Values.Primitives
 {
-    public class PrimitivesTest : IntegrationTestBase<Sensor>
+    public class BasicSerializablesTest : IntegrationTestBase<Sensor>
     {
         #region Properties
 

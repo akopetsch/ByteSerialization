@@ -3,7 +3,7 @@
 using ByteSerialization.IO;
 using ByteSerialization.Tests.Integration.TestObjects;
 
-namespace ByteSerialization.Tests.Integration.Composites
+namespace ByteSerialization.Tests.Integration.Values.Composites
 {
     public class CompositesTest : IntegrationTestBase<Car>
     {
@@ -15,7 +15,7 @@ namespace ByteSerialization.Tests.Integration.Composites
         protected override byte[] TestObjectBytes =>
             HexStringConverter.ToByteArray("0443 6172 3100 0000 0902 4d46"); // .Car1.....MF
 
-        protected override Endianness Endianness => 
+        protected override Endianness Endianness =>
             Endianness.BigEndian;
 
         #endregion

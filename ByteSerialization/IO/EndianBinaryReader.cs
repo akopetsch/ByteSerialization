@@ -15,7 +15,7 @@ namespace ByteSerialization.IO
         #region Fields
 
         private readonly BinaryReader _reader;
-        private readonly Dictionary<Type, ReadFunc> _readFuncs =
+        private readonly Dictionary<Type, ReadFunc> _primitiveReadFuncs =
             new Dictionary<Type, ReadFunc>();
 
         #endregion
@@ -45,7 +45,7 @@ namespace ByteSerialization.IO
             Endianness = endianness;
 
             _reader = new BinaryReader(stream);
-            InitFuncs();
+            InitPrimitiveReadFuncs();
         }
 
         #endregion
@@ -61,22 +61,22 @@ namespace ByteSerialization.IO
 
         #region Methods (initialization)
 
-        private void InitFuncs()
+        private void InitPrimitiveReadFuncs()
         {
-            _readFuncs.Add(typeof(bool), () => ReadBoolean());
-            _readFuncs.Add(typeof(byte), () => ReadByte());
-            _readFuncs.Add(typeof(sbyte), () => ReadSByte());
-            _readFuncs.Add(typeof(short), () => ReadInt16());
-            _readFuncs.Add(typeof(ushort), () => ReadUInt16());
-            _readFuncs.Add(typeof(int), () => ReadInt32());
-            _readFuncs.Add(typeof(uint), () => ReadUInt32());
-            _readFuncs.Add(typeof(long), () => ReadInt64());
-            _readFuncs.Add(typeof(ulong), () => ReadUInt64());
-            _readFuncs.Add(typeof(float), () => ReadSingle());
-            _readFuncs.Add(typeof(double), () => ReadDouble());
-            _readFuncs.Add(typeof(decimal), () => ReadDecimal());
-            _readFuncs.Add(typeof(char), () => ReadChar());
-            _readFuncs.Add(typeof(string), () => ReadString());
+            _primitiveReadFuncs.Add(typeof(bool), () => ReadBoolean());
+            _primitiveReadFuncs.Add(typeof(byte), () => ReadByte());
+            _primitiveReadFuncs.Add(typeof(sbyte), () => ReadSByte());
+            _primitiveReadFuncs.Add(typeof(short), () => ReadInt16());
+            _primitiveReadFuncs.Add(typeof(ushort), () => ReadUInt16());
+            _primitiveReadFuncs.Add(typeof(int), () => ReadInt32());
+            _primitiveReadFuncs.Add(typeof(uint), () => ReadUInt32());
+            _primitiveReadFuncs.Add(typeof(long), () => ReadInt64());
+            _primitiveReadFuncs.Add(typeof(ulong), () => ReadUInt64());
+            _primitiveReadFuncs.Add(typeof(float), () => ReadSingle());
+            _primitiveReadFuncs.Add(typeof(double), () => ReadDouble());
+            _primitiveReadFuncs.Add(typeof(decimal), () => ReadDecimal());
+            _primitiveReadFuncs.Add(typeof(char), () => ReadChar());
+            _primitiveReadFuncs.Add(typeof(string), () => ReadString());
         }
 
         #endregion
@@ -119,28 +119,15 @@ namespace ByteSerialization.IO
         public double ReadDouble() =>
             BytesSwapper.SwapIf(_reader.ReadDouble(), IsBigEndian);
 
-        private object ReadPrimitiveType(Type t) =>
-            _readFuncs[t].Invoke();
-
         #endregion
 
-        #region Methods (Read...; other value types)
+        #region Methods (Read...; other types)
 
         public decimal ReadDecimal() =>
-            ReadBytes(sizeof(decimal)).ReverseIf(IsBigEndian).ToArray().ToDecimal(0);
+            Read<byte>(sizeof(decimal)).ReverseIf(IsBigEndian).ToArray().ToDecimal(0);
 
         public string ReadString() =>
             throw new NotImplementedException();
-
-        #endregion
-
-        #region Methods (Read...; array types)
-
-        public byte[] ReadBytes(int count) =>
-            _reader.ReadBytes(count);
-
-        public char[] ReadChars(int count) =>
-            _reader.ReadChars(count);
 
         #endregion
 
@@ -149,46 +136,62 @@ namespace ByteSerialization.IO
         public T Read<T>() =>
             (T)Read(typeof(T));
 
-        public object Read(Type t)
+        public object Read(Type type)
         {
-            if (t.IsValueType)
+            if (!type.IsBasicSerializable())
+                throw new ArgumentException();
+
+            Type underlyingNullableType = Nullable.GetUnderlyingType(type);
+            if (underlyingNullableType?.IsPrimitiveOrEnum() ?? false)
             {
-                Type underlyingNullableType = Nullable.GetUnderlyingType(t);
-                if (underlyingNullableType?.IsPrimitiveOrEnum() ?? false)
-                {
-                    object nullableValue = Read(underlyingNullableType);
-                    return nullableValue;
-                }
-                else if (t.IsEnum)
-                {
-                    Type underlyingEnumType = Enum.GetUnderlyingType(t);
-                    object underlyingValue = Read(underlyingEnumType);
-                    object enumValue = Enum.ToObject(t, underlyingValue);
-                    return enumValue;
-                }
-                else if (t.IsPrimitive)
-                {
-                    object primitiveValue = ReadPrimitiveType(t);
-                    return primitiveValue;
-                }
+                object nullableValue = Read(underlyingNullableType);
+                return nullableValue;
             }
-            throw new ArgumentException();
+            else if (type.IsEnum)
+            {
+                Type underlyingEnumType = Enum.GetUnderlyingType(type);
+                object underlyingValue = Read(underlyingEnumType);
+                object enumValue = Enum.ToObject(type, underlyingValue);
+                return enumValue;
+            }
+            else if (type.IsPrimitive)
+            {
+                object primitiveValue = _primitiveReadFuncs[type].Invoke();
+                return primitiveValue;
+            }
+            else
+                throw new InvalidOperationException();
+        }
+
+        public T[] Read<T>(int count) =>
+            (T[])Read(typeof(T), count);
+
+        public Array Read(Type elementType, int count)
+        {
+            if (!elementType.IsBasicSerializableArray())
+                throw new ArgumentException();
+
+            Array array = Array.CreateInstance(elementType, count);
+            for (int i = 0; i < count; i++)
+                array.SetValue(Read(elementType), i);
+            return array;
         }
 
         #endregion
 
         #region Methods (Peek(...))
 
-        public T Peek<T>() => (T)Peek(typeof(T));
+        public T Peek<T>() => 
+            (T)Peek(typeof(T));
 
         public object Peek(Type t) =>
             AtPosition(BaseStream.Position, r => r.Read(t));
 
-        public byte[] PeekBytes(int count) =>
-            AtPosition(BaseStream.Position, r => r.ReadBytes(count));
+        public T[] Peek<T>(int count) =>
+            (T[])Peek(typeof(T), count);
 
-        public char[] PeekChars(int count) =>
-            AtPosition(BaseStream.Position, r => r.ReadChars(count));
+        public Array Peek(Type elementType, int count) =>
+            AtPosition(BaseStream.Position, r => r.Read(elementType, count));
 
         #endregion
 
