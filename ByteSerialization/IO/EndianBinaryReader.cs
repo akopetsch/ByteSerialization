@@ -156,7 +156,7 @@ namespace ByteSerialization.IO
 
         public Array Read(Type elementType, int count)
         {
-            if (!elementType.IsBasicSerializableArray())
+            if (!elementType.IsBasicSerializable())
                 throw new ArgumentException();
 
             Array array = Array.CreateInstance(elementType, count);
