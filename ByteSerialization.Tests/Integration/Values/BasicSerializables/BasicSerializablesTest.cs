@@ -1,11 +1,13 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using ByteSerialization.IO;
-using ByteSerialization.Tests.Integration.TestObjects;
+using ByteSerialization.Tests.Integration.Values.BasicSerializables.TestObjects;
+using Xunit.Abstractions;
 
 namespace ByteSerialization.Tests.Integration.Values.Primitives
 {
-    public class BasicSerializablesTest : IntegrationTestBase<Sensor>
+    public class BasicSerializablesTest(ITestOutputHelper testOutputHelper) : 
+        IntegrationTestBase<Sensor>(testOutputHelper)
     {
         #region Properties
 

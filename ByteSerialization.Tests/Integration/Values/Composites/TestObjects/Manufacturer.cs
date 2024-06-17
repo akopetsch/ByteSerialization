@@ -2,7 +2,7 @@
 
 using ByteSerialization.Attributes;
 
-namespace ByteSerialization.Tests.Integration.TestObjects
+namespace ByteSerialization.Tests.Integration.Values.Composites.TestObjects
 {
     public class Manufacturer
     {

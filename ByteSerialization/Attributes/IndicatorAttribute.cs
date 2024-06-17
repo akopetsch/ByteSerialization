@@ -9,9 +9,9 @@ namespace ByteSerialization.Attributes
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
     public class IndicatorAttribute : ByteSerializationAttribute
     {
-        public string Value { get; }
+        public object Value { get; }
 
-        public IndicatorAttribute(string value) =>
+        public IndicatorAttribute(object value) =>
             Value = value;
     }
 }

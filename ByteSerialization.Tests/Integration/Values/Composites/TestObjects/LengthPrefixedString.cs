@@ -3,7 +3,7 @@
 using ByteSerialization.Attributes;
 using ByteSerialization.IO;
 
-namespace ByteSerialization.Tests.Integration.TestObjects
+namespace ByteSerialization.Tests.Integration.Values.Composites.TestObjects
 {
     public class LengthPrefixedString
     {
@@ -38,7 +38,7 @@ namespace ByteSerialization.Tests.Integration.TestObjects
             {
                 if (!Equals(Length, other.Length))
                     return false;
-                if (!Enumerable.SequenceEqual(CharArray, other.CharArray))
+                if (!CharArray.SequenceEqual(other.CharArray))
                     return false;
                 return true;
             }

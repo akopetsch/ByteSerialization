@@ -2,7 +2,7 @@
 
 using ByteSerialization.Attributes;
 
-namespace ByteSerialization.Tests.Integration.TestObjects
+namespace ByteSerialization.Tests.Integration.Values.Composites.TestObjects
 {
     public class Car
     {
@@ -47,7 +47,7 @@ namespace ByteSerialization.Tests.Integration.TestObjects
 
         public override int GetHashCode() =>
             HashCode.Combine(
-                Name?.GetHashCode(), 
+                Name?.GetHashCode(),
                 Manufacturer?.GetHashCode());
 
         #endregion

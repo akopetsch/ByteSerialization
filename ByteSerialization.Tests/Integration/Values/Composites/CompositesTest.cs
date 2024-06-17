@@ -1,11 +1,13 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using ByteSerialization.IO;
-using ByteSerialization.Tests.Integration.TestObjects;
+using ByteSerialization.Tests.Integration.Values.Composites.TestObjects;
+using Xunit.Abstractions;
 
 namespace ByteSerialization.Tests.Integration.Values.Composites
 {
-    public class CompositesTest : IntegrationTestBase<Car>
+    public class CompositesTest(ITestOutputHelper testOutputHelper) : 
+        IntegrationTestBase<Car>(testOutputHelper)
     {
         #region Properties
 

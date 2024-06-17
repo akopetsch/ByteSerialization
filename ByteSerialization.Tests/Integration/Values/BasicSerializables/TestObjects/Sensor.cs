@@ -2,7 +2,7 @@
 
 using ByteSerialization.Attributes;
 
-namespace ByteSerialization.Tests.Integration.TestObjects
+namespace ByteSerialization.Tests.Integration.Values.BasicSerializables.TestObjects
 {
     public class Sensor
     {

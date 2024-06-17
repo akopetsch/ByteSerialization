@@ -2,7 +2,6 @@
 
 using ByteSerialization.Components.Attributes.Conditional;
 using ByteSerialization.Nodes;
-using System.Linq;
 
 namespace ByteSerialization.Attributes.Conditional
 {
@@ -13,36 +12,14 @@ namespace ByteSerialization.Attributes.Conditional
         protected override void OnInitialized()
         {
             base.OnInitialized();
-
-            Node.OnSerializing += ApplyIndicator;
+            Node.OnSerializing += WriteIndicator;
         }
 
-        private void ApplyIndicator()
-        {
-            if (Value != null)
-                Writer.Write(Attribute.Value.ToCharArray());
-        }
+        private void WriteIndicator() =>
+            Writer.Write(Attribute.Value);
 
-        public bool IsSerialized(Node node)
-        {
-            // get target indicator
-            var target = Attribute.Value;
-
-            // get actual indicator
-            int n = target.Length;
-            byte[] bytes = Reader.Read<byte>(n);
-            char[] chars = bytes.Select(b => (char)b).ToArray();
-            var actual = new string(chars);
-
-            // if target indicator equals actual indicator...
-            if (target.Equals(actual))
-                return true;
-            else
-            {
-                Context.Position -= n;
-                return false;
-            }
-        }
+        public bool IsSerialized(Node node) =>
+            Reader.TryRead(Attribute.Value);
 
         #endregion
     }
