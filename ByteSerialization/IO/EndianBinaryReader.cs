@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using ByteSerialization.Extensions;
+using ByteSerialization.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -180,6 +181,41 @@ namespace ByteSerialization.IO
 
         public Array Peek(Type elementType, int count) =>
             AtPosition(BaseStream.Position, r => r.Read(elementType, count));
+
+        #endregion
+
+        #region Methods (TryRead(...))
+
+        public bool TryRead(object value)
+        {
+            long oldPosition = BaseStream.Position;
+            Type type = value.GetType();
+            if (type.IsBasicSerializable())
+            {
+                object readValue = Read(type);
+                if (readValue.Equals(value))
+                    return true;
+                else
+                {
+                    BaseStream.Position = oldPosition;
+                    return false;
+                }
+            }
+            else if (type.IsBasicSerializableArray())
+            {
+                var array = (Array)value;
+                Array readArray = Read(type, array.Length);
+                if (ArrayComparer.AreEqual(readArray, array))
+                    return true;
+                else
+                {
+                    BaseStream.Position = oldPosition;
+                    return false;
+                }
+            }
+            else
+                throw new ArgumentException();
+        }
 
         #endregion
 
