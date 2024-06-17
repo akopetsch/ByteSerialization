@@ -114,10 +114,10 @@ namespace ByteSerialization.IO
             BytesSwapper.SwapIf(_reader.ReadUInt64(), IsBigEndian);
 
         public float ReadSingle() =>
-            BitConverter.ToSingle(ReadBytes(sizeof(float)).ReverseIf(IsBigEndian).ToArray(), 0);
+            BytesSwapper.SwapIf(_reader.ReadSingle(), IsBigEndian);
 
         public double ReadDouble() =>
-            BitConverter.ToDouble(ReadBytes(sizeof(double)).ReverseIf(IsBigEndian).ToArray(), 0);
+            BytesSwapper.SwapIf(_reader.ReadDouble(), IsBigEndian);
 
         private object ReadPrimitiveType(Type t) =>
             _readFuncs[t].Invoke();

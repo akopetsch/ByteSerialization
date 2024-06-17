@@ -113,10 +113,10 @@ namespace ByteSerialization.IO
             _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
 
         public void Write(float value) =>
-            _writer.Write(BitConverter.GetBytes(value).ReverseIf(IsBigEndian).ToArray());
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
 
         public void Write(double value) =>
-            _writer.Write(BytesSwapper.SwapIf(BitConverter.DoubleToInt64Bits(value), IsBigEndian));
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
 
         public void WritePrimitiveType(object value) =>
             _writeFuncs[value.GetType()].Invoke(value);
