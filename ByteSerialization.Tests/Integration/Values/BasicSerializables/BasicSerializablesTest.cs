@@ -2,27 +2,39 @@
 
 using ByteSerialization.IO;
 using ByteSerialization.Tests.Integration.Values.BasicSerializables.TestObjects;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace ByteSerialization.Tests.Integration.Values.Primitives
 {
     public class BasicSerializablesTest(ITestOutputHelper testOutputHelper) : 
-        IntegrationTestBase<Sensor>(testOutputHelper)
+        IntegrationTestBase(testOutputHelper)
     {
-        #region Properties
+        #region Fields
 
-        protected override Sensor TestObject => new()
+        private static readonly Sensor TestObject = new()
         {
             SensorId = 128,
             Status = SensorStatus.Inactive,
             SensorType = SensorType.Temperature,
         };
 
-        protected override byte[] TestObjectBytes =>
+        private static readonly byte[] TestBytes =
             HexStringConverter.ToByteArray("80 02 0001");
 
-        protected override Endianness Endianness =>
-            Endianness.BigEndian;
+        #endregion
+
+        #region Methods
+
+        [Fact]
+        public void Test_Deserialization() =>
+            AssertDeserializedObject(
+                TestObject, TestBytes, Endianness.BigEndian);
+
+        [Fact]
+        public void Test_Serialization() =>
+            AssertSerializedObject(
+                TestBytes, TestObject, Endianness.BigEndian);
 
         #endregion
     }

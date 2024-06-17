@@ -6,46 +6,40 @@ using Xunit.Abstractions;
 
 namespace ByteSerialization.Tests.Integration
 {
-    public abstract class IntegrationTestBase<TTestObject>(ITestOutputHelper testOutputHelper)
+    public abstract class IntegrationTestBase(ITestOutputHelper testOutputHelper)
     {
         #region Properties
 
         protected ITestOutputHelper TestOutputHelper { get; } = testOutputHelper;
 
-        protected abstract TTestObject TestObject { get; }
-        protected abstract byte[] TestObjectBytes { get; }
-        protected abstract Endianness Endianness { get; }
-
         #endregion
 
         #region Methods
 
-        [Fact]
-        public void TestDeserialization()
+        protected static void AssertDeserializedObject<TTestObject>(
+            TTestObject expectedObject, byte[] testBytes, Endianness endianness)
         {
-            TTestObject expected = TestObject;
-
-            using var ms = new MemoryStream(TestObjectBytes);
+            // get actualObject
+            using var ms = new MemoryStream(testBytes);
             using var ser = new ByteSerializer();
-            object actual = ser.Deserialize<TTestObject>(ms, Endianness);
+            object actualObject = ser.Deserialize<TTestObject>(ms, endianness);
 
-            Assert.Equal(expected, actual);
+            Assert.Equal(expectedObject, actualObject);
         }
 
-        [Fact]
-        public void TestSerialization()
+        protected void AssertSerializedObject<TTestObject>(
+            byte[] expectedBytes, TTestObject testObject, Endianness endianness)
         {
-            byte[] expected = TestObjectBytes;
-
+            // get actualBytes
             using var ms = new MemoryStream();
             using var ser = new ByteSerializer();
-            ser.Serialize(ms, TestObject, Endianness);
-            byte[] actual = ms.ToArray();
+            ser.Serialize(ms, testObject, endianness);
+            byte[] actualBytes = ms.ToArray();
 
-            WriteTestOutput(nameof(expected), expected);
-            WriteTestOutput(nameof(actual), actual);
+            WriteTestOutput(nameof(expectedBytes), expectedBytes);
+            WriteTestOutput(nameof(actualBytes), actualBytes);
 
-            Assert.True(expected.SequenceEqual(actual));
+            Assert.True(expectedBytes.SequenceEqual(actualBytes));
         }
 
         private void WriteTestOutput(string name, byte[] bytes)
