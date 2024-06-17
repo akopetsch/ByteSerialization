@@ -12,11 +12,14 @@ namespace ByteSerialization.Attributes.Conditional
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Node.OnSerializing += WriteIndicator;
+            Node.OnSerializing += WriteIndicatorIfNotNull;
         }
 
-        private void WriteIndicator() =>
-            Writer.Write(Attribute.Value);
+        private void WriteIndicatorIfNotNull()
+        {
+            if (Node.Value != null)
+                Writer.Write(Attribute.Value);
+        }
 
         public bool IsSerialized(Node node) =>
             Reader.TryRead(Attribute.Value);

@@ -12,10 +12,10 @@ namespace ByteSerialization.Tests.Integration.Attributes.Indicator
     {
         #region Fields
 
-        private static readonly byte[] TestBytes =
+        private static readonly byte[] Indicated_TestBytes =
             HexStringConverter.ToByteArray("41 58747261 42 43"); // 'A', 'Xtra', 'B', C'
 
-        private static readonly IndicatorTestClass TestObject = new()
+        private static readonly IndicatorTestClass Indicated_TestObject = new()
         {
             Byte0 = (byte)'A',
             Bar = new IndicatorTestClass2()
@@ -25,19 +25,38 @@ namespace ByteSerialization.Tests.Integration.Attributes.Indicator
             },
         };
 
+        private static readonly byte[] NotIndicated_TestBytes =
+            HexStringConverter.ToByteArray("41"); // 'A'
+
+        private static readonly IndicatorTestClass NotIndicated_TestObject = new()
+        {
+            Byte0 = (byte)'A',
+            Bar = null,
+        };
+
         #endregion
 
         #region Methods
 
         [Fact]
-        public void Test_Deserialization() =>
+        public void Test_Indicated_Deserialization() =>
             AssertDeserializedObject(
-                TestObject, TestBytes, Endianness.BigEndian);
+                Indicated_TestObject, Indicated_TestBytes, Endianness.BigEndian);
 
         [Fact]
-        public void Test_Serialization() =>
+        public void Test_Indicated_Serialization() =>
             AssertSerializedObject(
-                TestBytes, TestObject, Endianness.BigEndian);
+                Indicated_TestBytes, Indicated_TestObject, Endianness.BigEndian);
+
+        [Fact]
+        public void Test_NotIndicated_Deserialization() =>
+            AssertDeserializedObject(
+                NotIndicated_TestObject, [ 0x41, 0, 0, 0, 0], Endianness.BigEndian); // FIXME: testBytes
+
+        [Fact]
+        public void Test_NotIndicated_Serialization() =>
+            AssertSerializedObject(
+                NotIndicated_TestBytes, NotIndicated_TestObject, Endianness.BigEndian);
 
         #endregion
     }
