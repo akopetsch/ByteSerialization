@@ -3,43 +3,83 @@
 using ByteSerialization.Extensions;
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace ByteSerialization.IO
 {
-    public static class SizeOfHelper
+    public class SizeOfHelper
     {
-        public static int GetSizeOf<T>() =>
-            GetSizeOf(typeof(T));
+        #region Properties
 
-        public static int GetSizeOf(Type type)
+        public Encoding Encoding { get; }
+
+        #endregion
+
+        #region Constructor
+
+        public SizeOfHelper() : 
+            this(Encoding.UTF8)
+        { }
+
+        public SizeOfHelper(Encoding encoding) =>
+            Encoding = encoding;
+
+        #endregion
+
+        #region Methods
+
+        public int GetSizeOfType<T>() =>
+            GetSizeOfType(typeof(T));
+
+        public int GetSizeOfType(Type type)
         {
             if (!type.IsBasicSerializable())
                 throw new ArgumentException();
 
             Type underlyingNullableType = Nullable.GetUnderlyingType(type);
             if (underlyingNullableType?.IsPrimitiveOrEnum() ?? false)
-                return GetSizeOf(underlyingNullableType);
+                return GetSizeOfType(underlyingNullableType);
             else if (type.IsEnum)
-                return GetSizeOf(Enum.GetUnderlyingType(type));
+                return GetSizeOfType(Enum.GetUnderlyingType(type));
             else if (type.IsPrimitive)
-                return Marshal.SizeOf(type);
+            {
+                if (type == typeof(char))
+                {
+                    if (Encoding.IsSingleByte)
+                        return 1;
+                    else
+                        throw new ArgumentException();
+                }
+                else
+                    return Marshal.SizeOf(type);
+            }
             else
                 throw new InvalidOperationException();
         }
 
-        public static int GetSizeOfObject(object value)
+        public int GetSizeOfObject(object value)
         {
             Type type = value.GetType();
-            if (!type.IsBasicSerializable())
+            if (!type.IsBasicSerializableOrArray())
                 throw new ArgumentException();
             if (type.IsArray)
             {
-                int length = (value as Array).Length;
-                int elementSize = GetSizeOf(type.GetElementType());
-                return length * elementSize;
+                int size = 0;
+                var array = (value as Array);
+                int length = array.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    object element = array.GetValue(i);
+                    size += GetSizeOfObject(element);
+                }
+                return size;
             }
+            else if (type == typeof(char))
+                return Encoding.GetByteCount(new char[] { (char)value });
             else
-                return GetSizeOf(type);
+                return GetSizeOfType(type);
         }
+
+        #endregion
     }
 }
