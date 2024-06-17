@@ -53,7 +53,13 @@ namespace ByteSerialization.Tests.Unit.IO
 
         #region Methods ([Fact]; int/uint)
 
-        // TODO: Test_Swap_Int64
+        [Fact]
+        public void Test_Swap_Int64() =>
+            Assert.Equal(
+                expected:
+                    (long)0x2211ffeeddccbb00,
+                actual: BytesSwapper.Swap(
+                    (long)0x00bbccddeeff1122));
 
         [Fact]
         public void Test_Swap_UInt64() =>
