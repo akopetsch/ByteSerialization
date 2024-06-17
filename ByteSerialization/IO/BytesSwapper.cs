@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using System.Runtime.CompilerServices;
 
 namespace ByteSerialization.IO
@@ -85,6 +86,28 @@ namespace ByteSerialization.IO
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong SwapIf(ulong x, bool condition) =>
+            condition ? Swap(x) : x;
+
+        #endregion
+
+        #region Methods (float/double)
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Swap(float x) =>
+            BitConverter.Int32BitsToSingle(
+                Swap(BitConverter.SingleToInt32Bits(x)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Swap(double x) =>
+            BitConverter.Int64BitsToDouble(
+                Swap(BitConverter.DoubleToInt64Bits(x)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float SwapIf(float x, bool condition) =>
+            condition ? Swap(x) : x;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double SwapIf(double x, bool condition) =>
             condition ? Swap(x) : x;
 
         #endregion
