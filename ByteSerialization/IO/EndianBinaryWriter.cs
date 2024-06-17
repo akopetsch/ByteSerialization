@@ -14,20 +14,25 @@ namespace ByteSerialization.IO
     {
         #region Fields
 
-        private BinaryWriter writer;
-        private Dictionary<Type, WriteFunc> funcs =
+        private readonly BinaryWriter _writer;
+        private readonly Dictionary<Type, WriteFunc> _writeFuncs = 
             new Dictionary<Type, WriteFunc>();
 
         #endregion
 
-        #region Properties
+        #region Properties (input)
 
         public Stream BaseStream { get; set; }
         public Endianness Endianness { get; set; }
-        public ulong Count { get; private set; } = 0;
 
-        public bool IsBigEndian => Endianness == Endianness.BigEndian;
-        public bool IsLittleEndian => Endianness == Endianness.LittleEndian;
+        #endregion
+
+        #region Properties (dynamic)
+
+        public bool IsBigEndian => 
+            Endianness == Endianness.BigEndian;
+        public bool IsLittleEndian => 
+            Endianness == Endianness.LittleEndian;
 
         #endregion
 
@@ -38,51 +43,107 @@ namespace ByteSerialization.IO
             BaseStream = stream;
             Endianness = endianness;
 
-            writer = new BinaryWriter(stream);
-            InitFuncs();
+            _writer = new BinaryWriter(stream);
+            InitWriteFuncs();
         }
 
-        private void InitFuncs()
-        {
-            funcs.Add(typeof(bool), x => Write((bool)x));
-            funcs.Add(typeof(byte), x => Write((byte)x));
-            funcs.Add(typeof(sbyte), x => Write((sbyte)x));
-            funcs.Add(typeof(short), x => Write((short)x));
-            funcs.Add(typeof(ushort), x => Write((ushort)x));
-            funcs.Add(typeof(int), x => Write((int)x));
-            funcs.Add(typeof(uint), x => Write((uint)x));
-            funcs.Add(typeof(long), x => Write((long)x));
-            funcs.Add(typeof(ulong), x => Write((ulong)x));
-            funcs.Add(typeof(float), x => Write((float)x));
-            funcs.Add(typeof(double), x => Write((double)x));
-            funcs.Add(typeof(decimal), x => Write((decimal)x));
-            funcs.Add(typeof(char), x => Write((char)x));
-            funcs.Add(typeof(string), x => Write((string)x));
-        }
+        #endregion
+
+        #region Methods (: IDisposable)
 
         public void Dispose() => 
-            writer.Dispose();
+            _writer.Dispose();
 
         #endregion
 
         #region Methods
 
-        public void Write(byte value) => writer.Write(value);
-        public void Write(sbyte value) => writer.Write(value);
-        public void Write(bool value) => writer.Write(value);
-        public void Write(short value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
-        public void Write(ushort value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
-        public void Write(int value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
-        public void Write(uint value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
-        public void Write(long value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
-        public void Write(ulong value) => writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
-        public void Write(float value) => writer.Write(BitConverter.GetBytes(value).ReverseIf(IsBigEndian).ToArray());
-        public void Write(double value) => writer.Write(BytesSwapper.SwapIf(BitConverter.DoubleToInt64Bits(value), IsBigEndian));
-        public void Write(decimal value) => throw new NotImplementedException();
-        public void Write(char value) => writer.Write(value);
-        public void Write(char[] value) => writer.Write(value);
-        public void Write(string value) => writer.Write(value);
-        public void Write(byte[] value) => writer.Write(value);
+        #region Methods (initialization)
+
+        private void InitWriteFuncs()
+        {
+            _writeFuncs.Add(typeof(bool), x => Write((bool)x));
+            _writeFuncs.Add(typeof(byte), x => Write((byte)x));
+            _writeFuncs.Add(typeof(sbyte), x => Write((sbyte)x));
+            _writeFuncs.Add(typeof(short), x => Write((short)x));
+            _writeFuncs.Add(typeof(ushort), x => Write((ushort)x));
+            _writeFuncs.Add(typeof(int), x => Write((int)x));
+            _writeFuncs.Add(typeof(uint), x => Write((uint)x));
+            _writeFuncs.Add(typeof(long), x => Write((long)x));
+            _writeFuncs.Add(typeof(ulong), x => Write((ulong)x));
+            _writeFuncs.Add(typeof(float), x => Write((float)x));
+            _writeFuncs.Add(typeof(double), x => Write((double)x));
+            _writeFuncs.Add(typeof(decimal), x => Write((decimal)x));
+            _writeFuncs.Add(typeof(char), x => Write((char)x));
+            _writeFuncs.Add(typeof(string), x => Write((string)x));
+        }
+
+        #endregion
+
+        #region Methods (Write(...); primitive types)
+
+        public void Write(bool value) =>
+            _writer.Write(value);
+
+        public void Write(byte value) =>
+            _writer.Write(value);
+
+        public void Write(sbyte value) =>
+            _writer.Write(value);
+
+        public void Write(char value) =>
+            _writer.Write(value); // no byte-swapping because of UTF-8
+
+        public void Write(short value) =>
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+
+        public void Write(ushort value) =>
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+
+        public void Write(int value) =>
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+
+        public void Write(uint value) =>
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+
+        public void Write(long value) =>
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+
+        public void Write(ulong value) =>
+            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+
+        public void Write(float value) =>
+            _writer.Write(BitConverter.GetBytes(value).ReverseIf(IsBigEndian).ToArray());
+
+        public void Write(double value) =>
+            _writer.Write(BytesSwapper.SwapIf(BitConverter.DoubleToInt64Bits(value), IsBigEndian));
+
+        public void WritePrimitiveType(object value) =>
+            _writeFuncs[value.GetType()].Invoke(value);
+
+        #endregion
+
+        #region Methods (Write(...); other value types)
+
+        public void Write(decimal value) =>
+            throw new NotImplementedException();
+
+        public void Write(string value) =>
+            _writer.Write(value);
+
+        #endregion
+
+        #region Methods (Write(...); array types)
+
+        public void Write(char[] value) =>
+            _writer.Write(value);
+
+        public void Write(byte[] value) =>
+            _writer.Write(value);
+
+        #endregion
+
+        #region Write (Write(...); object values)
 
         public void Write(object value)
         {
@@ -112,8 +173,9 @@ namespace ByteSerialization.IO
             throw new ArgumentException();
         }
 
-        public void WritePrimitiveType(object value) =>
-            funcs[value.GetType()].Invoke(value);
+        #endregion
+
+        #region Methods (AtPosition(...))
 
         public void AtPosition(long position, Action<EndianBinaryWriter> action)
         {
@@ -122,6 +184,8 @@ namespace ByteSerialization.IO
             action.Invoke(this);
             BaseStream.Position = oldPosition;
         }
+
+        #endregion
 
         #endregion
     }

@@ -1,6 +1,5 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using ByteSerialization.Components.Values.Primitives;
 using ByteSerialization.Extensions;
 using System;
 using System.Collections.Generic;
@@ -15,20 +14,26 @@ namespace ByteSerialization.IO
     {
         #region Fields
 
-        private BinaryReader reader;
-        private Dictionary<Type, ReadFunc> funcs =
+        private readonly BinaryReader _reader;
+        private readonly Dictionary<Type, ReadFunc> _readFuncs =
             new Dictionary<Type, ReadFunc>();
 
         #endregion
 
-        #region Properties
+        #region Properties (input)
 
         public Stream BaseStream { get; set; }
         public Endianness Endianness { get; set; }
-        public ulong Count { get; private set; } = 0;
 
-        public bool IsBigEndian => Endianness == Endianness.BigEndian;
-        public bool IsLittleEndian => Endianness == Endianness.LittleEndian;
+        #endregion
+
+        #region Properties (dynamic)
+
+        public bool IsBigEndian => 
+            Endianness == Endianness.BigEndian;
+
+        public bool IsLittleEndian => 
+            Endianness == Endianness.LittleEndian;
 
         #endregion
 
@@ -39,61 +44,107 @@ namespace ByteSerialization.IO
             BaseStream = stream;
             Endianness = endianness;
 
-            reader = new BinaryReader(stream);
+            _reader = new BinaryReader(stream);
             InitFuncs();
         }
-
-        private void InitFuncs()
-        {
-            funcs.Add(typeof(bool), () => ReadBoolean());
-            funcs.Add(typeof(byte), () => ReadByte());
-            funcs.Add(typeof(sbyte), () => ReadSByte());
-            funcs.Add(typeof(short), () => ReadInt16());
-            funcs.Add(typeof(ushort), () => ReadUInt16());
-            funcs.Add(typeof(int), () => ReadInt32());
-            funcs.Add(typeof(uint), () => ReadUInt32());
-            funcs.Add(typeof(long), () => ReadInt64());
-            funcs.Add(typeof(ulong), () => ReadUInt64());
-            funcs.Add(typeof(float), () => ReadSingle());
-            funcs.Add(typeof(double), () => ReadDouble());
-            funcs.Add(typeof(decimal), () => ReadDecimal());
-            funcs.Add(typeof(char), () => ReadChar());
-            funcs.Add(typeof(string), () => ReadString());
-        }
-
-        public void Dispose() => 
-            reader.Dispose();
 
         #endregion
 
         #region Methods
 
-        public bool ReadBoolean() => reader.ReadBoolean();
-        public byte ReadByte() => reader.ReadByte();
-        public sbyte ReadSByte() => reader.ReadSByte();
-        public char ReadChar() => reader.ReadChar();
-        public short ReadInt16() => BytesSwapper.SwapIf(reader.ReadInt16(), IsBigEndian);
-        public ushort ReadUInt16() => BytesSwapper.SwapIf(reader.ReadUInt16(), IsBigEndian);
-        public int ReadInt32() => BytesSwapper.SwapIf(reader.ReadInt32(), IsBigEndian);
-        public uint ReadUInt32() => BytesSwapper.SwapIf(reader.ReadUInt32(), IsBigEndian);
-        public long ReadInt64() => BytesSwapper.SwapIf(reader.ReadInt64(), IsBigEndian);
-        public ulong ReadUInt64() => BytesSwapper.SwapIf(reader.ReadUInt64(), IsBigEndian);
-        public float ReadSingle() => BitConverter.ToSingle(ReadBytes(sizeof(float)).ReverseIf(IsBigEndian).ToArray(), 0);
-        public double ReadDouble() => BitConverter.ToDouble(ReadBytes(sizeof(double)).ReverseIf(IsBigEndian).ToArray(), 0);
-        public decimal ReadDecimal() => ReadBytes(sizeof(decimal)).ReverseIf(IsBigEndian).ToArray().ToDecimal(0);
-        public byte[] ReadBytes(int count) => reader.ReadBytes(count);
-        public char[] ReadChars(int count) => reader.ReadChars(count);
-        public string ReadString() => throw new NotImplementedException();
+        #region Methods (: IDisposable)
 
-        public int[] ReadInt32(int count) => Read(ReadInt32, count);
+        public void Dispose() => 
+            _reader.Dispose();
 
-        private T[] Read<T>(Func<T> func, int count)
+        #endregion
+
+        #region Methods (initialization)
+
+        private void InitFuncs()
         {
-            var array = new T[count];
-            for (int i = 0; i < count; i++)
-                array[i] = func.Invoke();
-            return array;
+            _readFuncs.Add(typeof(bool), () => ReadBoolean());
+            _readFuncs.Add(typeof(byte), () => ReadByte());
+            _readFuncs.Add(typeof(sbyte), () => ReadSByte());
+            _readFuncs.Add(typeof(short), () => ReadInt16());
+            _readFuncs.Add(typeof(ushort), () => ReadUInt16());
+            _readFuncs.Add(typeof(int), () => ReadInt32());
+            _readFuncs.Add(typeof(uint), () => ReadUInt32());
+            _readFuncs.Add(typeof(long), () => ReadInt64());
+            _readFuncs.Add(typeof(ulong), () => ReadUInt64());
+            _readFuncs.Add(typeof(float), () => ReadSingle());
+            _readFuncs.Add(typeof(double), () => ReadDouble());
+            _readFuncs.Add(typeof(decimal), () => ReadDecimal());
+            _readFuncs.Add(typeof(char), () => ReadChar());
+            _readFuncs.Add(typeof(string), () => ReadString());
         }
+
+        #endregion
+
+        #region Methods (Read...; primitive types)
+
+        public bool ReadBoolean() =>
+            _reader.ReadBoolean();
+
+        public byte ReadByte() =>
+            _reader.ReadByte();
+
+        public sbyte ReadSByte() =>
+            _reader.ReadSByte();
+
+        public char ReadChar() =>
+            _reader.ReadChar(); // no byte-swapping because of UTF-8
+
+        public short ReadInt16() =>
+            BytesSwapper.SwapIf(_reader.ReadInt16(), IsBigEndian);
+
+        public ushort ReadUInt16() =>
+            BytesSwapper.SwapIf(_reader.ReadUInt16(), IsBigEndian);
+
+        public int ReadInt32() =>
+            BytesSwapper.SwapIf(_reader.ReadInt32(), IsBigEndian);
+
+        public uint ReadUInt32() =>
+            BytesSwapper.SwapIf(_reader.ReadUInt32(), IsBigEndian);
+
+        public long ReadInt64() =>
+            BytesSwapper.SwapIf(_reader.ReadInt64(), IsBigEndian);
+
+        public ulong ReadUInt64() =>
+            BytesSwapper.SwapIf(_reader.ReadUInt64(), IsBigEndian);
+
+        public float ReadSingle() =>
+            BitConverter.ToSingle(ReadBytes(sizeof(float)).ReverseIf(IsBigEndian).ToArray(), 0);
+
+        public double ReadDouble() =>
+            BitConverter.ToDouble(ReadBytes(sizeof(double)).ReverseIf(IsBigEndian).ToArray(), 0);
+
+        private object ReadPrimitiveType(Type t) =>
+            _readFuncs[t].Invoke();
+
+        #endregion
+
+        #region Methods (Read...; other value types)
+
+        public decimal ReadDecimal() =>
+            ReadBytes(sizeof(decimal)).ReverseIf(IsBigEndian).ToArray().ToDecimal(0);
+
+        public string ReadString() =>
+            throw new NotImplementedException();
+
+        #endregion
+
+        #region Methods (Read...; array types)
+
+        public byte[] ReadBytes(int count) =>
+            _reader.ReadBytes(count);
+
+        public char[] ReadChars(int count) =>
+            _reader.ReadChars(count);
+
+        #endregion
+
+        #region Methods (Read(...); by type)
 
         public T Read<T>() =>
             (T)Read(typeof(T));
@@ -113,17 +164,20 @@ namespace ByteSerialization.IO
             throw new ArgumentException();
         }
 
-        private object ReadPrimitiveType(Type t) =>
-            funcs[t].Invoke();
-
         #endregion
 
-        #region Methods (Peek...)
+        #region Methods (Peek(...))
 
         public T Peek<T>() => (T)Peek(typeof(T));
-        public object Peek(Type t) => AtPosition(BaseStream.Position, r => r.Read(t));
-        public byte[] PeekBytes(int count) => AtPosition(BaseStream.Position, r => r.ReadBytes(count));
-        public char[] PeekChars(int count) => AtPosition(BaseStream.Position, r => r.ReadChars(count));
+
+        public object Peek(Type t) =>
+            AtPosition(BaseStream.Position, r => r.Read(t));
+
+        public byte[] PeekBytes(int count) =>
+            AtPosition(BaseStream.Position, r => r.ReadBytes(count));
+
+        public char[] PeekChars(int count) =>
+            AtPosition(BaseStream.Position, r => r.ReadChars(count));
 
         #endregion
 
@@ -137,6 +191,8 @@ namespace ByteSerialization.IO
             BaseStream.Position = oldPosition;
             return result;
         }
+
+        #endregion
 
         #endregion
     }
