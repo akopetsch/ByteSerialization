@@ -3,9 +3,9 @@
 using ByteSerialization.Attributes;
 using ByteSerialization.IO;
 
-namespace ByteSerialization.Tests.Integration
+namespace ByteSerialization.Tests.Integration.Composites
 {
-    public class ComplexIntegrationTest : IntegrationTestBase
+    public class CompositesTest : IntegrationTestBase
     {
         #region Classes
 

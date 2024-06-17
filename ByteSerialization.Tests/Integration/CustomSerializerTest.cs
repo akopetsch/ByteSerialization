@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ByteSerialization.Tests.Integration
 {
-    public class SystemHalfTest
+    public class CustomSerializerTest
     {
         #region Classes (ICustomSerializer)
 
