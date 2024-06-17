@@ -66,6 +66,7 @@ namespace ByteSerialization.IO
             _primitiveReadFuncs.Add(typeof(bool), () => ReadBoolean());
             _primitiveReadFuncs.Add(typeof(byte), () => ReadByte());
             _primitiveReadFuncs.Add(typeof(sbyte), () => ReadSByte());
+            _primitiveReadFuncs.Add(typeof(char), () => ReadChar());
             _primitiveReadFuncs.Add(typeof(short), () => ReadInt16());
             _primitiveReadFuncs.Add(typeof(ushort), () => ReadUInt16());
             _primitiveReadFuncs.Add(typeof(int), () => ReadInt32());
@@ -74,9 +75,6 @@ namespace ByteSerialization.IO
             _primitiveReadFuncs.Add(typeof(ulong), () => ReadUInt64());
             _primitiveReadFuncs.Add(typeof(float), () => ReadSingle());
             _primitiveReadFuncs.Add(typeof(double), () => ReadDouble());
-            _primitiveReadFuncs.Add(typeof(decimal), () => ReadDecimal());
-            _primitiveReadFuncs.Add(typeof(char), () => ReadChar());
-            _primitiveReadFuncs.Add(typeof(string), () => ReadString());
         }
 
         #endregion
@@ -118,16 +116,6 @@ namespace ByteSerialization.IO
 
         public double ReadDouble() =>
             BytesSwapper.SwapIf(_reader.ReadDouble(), IsBigEndian);
-
-        #endregion
-
-        #region Methods (Read...; other types)
-
-        public decimal ReadDecimal() =>
-            Read<byte>(sizeof(decimal)).ReverseIf(IsBigEndian).ToArray().ToDecimal(0);
-
-        public string ReadString() =>
-            throw new NotImplementedException();
 
         #endregion
 

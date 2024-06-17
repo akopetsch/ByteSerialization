@@ -62,6 +62,7 @@ namespace ByteSerialization.IO
             _primitiveWriteFuncs.Add(typeof(bool), x => Write((bool)x));
             _primitiveWriteFuncs.Add(typeof(byte), x => Write((byte)x));
             _primitiveWriteFuncs.Add(typeof(sbyte), x => Write((sbyte)x));
+            _primitiveWriteFuncs.Add(typeof(char), x => Write((char)x));
             _primitiveWriteFuncs.Add(typeof(short), x => Write((short)x));
             _primitiveWriteFuncs.Add(typeof(ushort), x => Write((ushort)x));
             _primitiveWriteFuncs.Add(typeof(int), x => Write((int)x));
@@ -70,9 +71,6 @@ namespace ByteSerialization.IO
             _primitiveWriteFuncs.Add(typeof(ulong), x => Write((ulong)x));
             _primitiveWriteFuncs.Add(typeof(float), x => Write((float)x));
             _primitiveWriteFuncs.Add(typeof(double), x => Write((double)x));
-            _primitiveWriteFuncs.Add(typeof(decimal), x => Write((decimal)x));
-            _primitiveWriteFuncs.Add(typeof(char), x => Write((char)x));
-            _primitiveWriteFuncs.Add(typeof(string), x => Write((string)x));
         }
 
         #endregion
