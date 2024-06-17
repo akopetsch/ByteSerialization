@@ -44,6 +44,8 @@ namespace ByteSerialization.Attributes
                 i = (int)boundProperty.Value;
             else if (t == typeof(short))
                 i = (short)boundProperty.Value;
+            else if (t == typeof(byte))
+                i = (byte)boundProperty.Value;
             else
                 throw new NotImplementedException();
             return i;

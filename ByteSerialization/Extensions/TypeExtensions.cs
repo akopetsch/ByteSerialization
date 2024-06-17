@@ -40,17 +40,7 @@ namespace ByteSerialization.Extensions
             }
         }
 
-        internal static Type GetUnderlyingTypeOrSelf(this Type type)
-        {
-            if (type.IsValueType)
-            {
-                Type underlyingEnumType = Nullable.GetUnderlyingType(type);
-                if (underlyingEnumType != null)
-                    return underlyingEnumType;
-                else if (type.IsEnum)
-                    return Enum.GetUnderlyingType(type);
-            }
-            return type;
-        }
+        internal static bool IsPrimitiveOrEnum(this Type t) =>
+            t.IsPrimitive || t.IsEnum;
     }
 }

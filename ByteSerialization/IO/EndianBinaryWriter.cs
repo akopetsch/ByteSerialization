@@ -151,17 +151,17 @@ namespace ByteSerialization.IO
             if (t.IsValueType)
             {
                 Type underlyingNullableType = Nullable.GetUnderlyingType(t);
-                if (underlyingNullableType?.IsPrimitive == true)
+                if (underlyingNullableType?.IsPrimitiveOrEnum() ?? false)
                 {
                     object underlyingValue = Convert.ChangeType(value, underlyingNullableType);
-                    WritePrimitiveType(underlyingValue);
+                    Write(underlyingValue);
                     return;
                 }
                 else if (t.IsEnum)
                 {
                     Type underlyingEnumType = Enum.GetUnderlyingType(t);
                     object underlyingValue = Convert.ChangeType(value, underlyingEnumType);
-                    WritePrimitiveType(underlyingValue);
+                    Write(underlyingValue);
                     return;
                 }
                 else if (t.IsPrimitive)

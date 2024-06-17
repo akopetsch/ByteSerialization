@@ -154,12 +154,23 @@ namespace ByteSerialization.IO
             if (t.IsValueType)
             {
                 Type underlyingNullableType = Nullable.GetUnderlyingType(t);
-                if (underlyingNullableType?.IsPrimitive == true)
-                    return Read(underlyingNullableType);
+                if (underlyingNullableType?.IsPrimitiveOrEnum() ?? false)
+                {
+                    object nullableValue = Read(underlyingNullableType);
+                    return nullableValue;
+                }
                 else if (t.IsEnum)
-                    return Enum.ToObject(t, ReadPrimitiveType(Enum.GetUnderlyingType(t)));
+                {
+                    Type underlyingEnumType = Enum.GetUnderlyingType(t);
+                    object underlyingValue = Read(underlyingEnumType);
+                    object enumValue = Enum.ToObject(t, underlyingValue);
+                    return enumValue;
+                }
                 else if (t.IsPrimitive)
-                    return ReadPrimitiveType(t);
+                {
+                    object primitiveValue = ReadPrimitiveType(t);
+                    return primitiveValue;
+                }
             }
             throw new ArgumentException();
         }

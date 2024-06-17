@@ -22,7 +22,8 @@ namespace ByteSerialization.Components.Values
             if (Context.Serializer.GetCustomSerializer(type) != null)
                 return typeof(CustomSerializerComponent);
 
-            if (type.GetUnderlyingTypeOrSelf()?.IsPrimitive ?? false)
+            if (type.IsPrimitiveOrEnum() ||
+                (Nullable.GetUnderlyingType(type)?.IsPrimitiveOrEnum() ?? false))
                 return typeof(PrimitiveComponent);
 
             if (typeof(ICustomSerializable).IsAssignableFrom(type))
