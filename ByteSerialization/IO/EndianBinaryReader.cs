@@ -159,6 +159,9 @@ namespace ByteSerialization.IO
             if (!elementType.IsBasicSerializable())
                 throw new ArgumentException();
 
+            if (elementType == typeof(byte))
+                return _reader.ReadBytes(count);
+
             Array array = Array.CreateInstance(elementType, count);
             for (int i = 0; i < count; i++)
                 array.SetValue(Read(elementType), i);
