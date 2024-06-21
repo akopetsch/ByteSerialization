@@ -108,10 +108,12 @@ namespace ByteSerialization.IO
             _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
 
         public void Write(float value) =>
-            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+            _writer.Write(BytesSwapper.SwapIf(BitConverter.SingleToInt32Bits(value), IsBigEndian));
+        // HACK: regular ``_writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));`` is probably not deterministic across .NET 8 and Unity 2022.3.30f1 (LTS)
 
         public void Write(double value) =>
-            _writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));
+            _writer.Write(BytesSwapper.SwapIf(BitConverter.DoubleToInt64Bits(value), IsBigEndian));
+        // HACK: regular ``_writer.Write(BytesSwapper.SwapIf(value, IsBigEndian));`` is probably not deterministic across .NET 8 and Unity 2022.3.30f1 (LTS)
 
         #endregion
 

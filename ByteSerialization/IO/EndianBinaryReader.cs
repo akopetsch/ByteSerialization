@@ -112,10 +112,12 @@ namespace ByteSerialization.IO
             BytesSwapper.SwapIf(_reader.ReadUInt64(), IsBigEndian);
 
         public float ReadSingle() =>
-            BytesSwapper.SwapIf(_reader.ReadSingle(), IsBigEndian);
+            BitConverter.Int32BitsToSingle(BytesSwapper.SwapIf(_reader.ReadInt32(), IsBigEndian));
+        // HACK: regular ``BytesSwapper.SwapIf(_reader.ReadSingle(), IsBigEndian);`` is not deterministic across .NET 8 and Unity 2022.3.30f1 (LTS)
 
         public double ReadDouble() =>
-            BytesSwapper.SwapIf(_reader.ReadDouble(), IsBigEndian);
+            BitConverter.Int64BitsToDouble(BytesSwapper.SwapIf(_reader.ReadInt64(), IsBigEndian));
+        // HACK: regular ``BytesSwapper.SwapIf(_reader.ReadDouble(), IsBigEndian);`` is probably also not deterministic across .NET 8 and Unity 2022.3.30f1 (LTS)
 
         #endregion
 
