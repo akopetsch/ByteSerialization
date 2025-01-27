@@ -5,7 +5,7 @@
     <Nullable>disable</Nullable>
     <Authors>Alexander Kopetsch</Authors>
     <Version>0.0.1.0</Version>
-    <PackageVersion>0.0.1-alpha.10</PackageVersion>
+    <PackageVersion>0.0.1-alpha.11</PackageVersion>
     <PackageProjectUrl>https://github.com/akopetsch/ByteSerialization</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -32,6 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AKopetsch.IOHelper" Version="0.1.0-alpha.1" />
     <PackageReference Include="Fody" Version="6.8.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

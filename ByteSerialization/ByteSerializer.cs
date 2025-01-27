@@ -1,6 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using ByteSerialization.IO;
+using AKopetsch.IOHelper;
 using ByteSerialization.Nodes;
 using System;
 using System.Collections.Generic;

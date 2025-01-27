@@ -1,12 +1,12 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using AKopetsch.IOHelper;
 using ByteSerialization.Attributes.Reference;
 using ByteSerialization.Components;
 using ByteSerialization.Components.Attributes.Conditional;
 using ByteSerialization.Components.Values.Composites.Collections;
 using ByteSerialization.Components.Values.Composites.Records;
 using ByteSerialization.Extensions;
-using ByteSerialization.IO;
 using ByteSerialization.Pooling;
 using PropertyChanged;
 using System;

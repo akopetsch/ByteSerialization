@@ -10,8 +10,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Mode = ByteSerialization.ByteSerializerMode;
-using Reader = ByteSerialization.IO.EndianBinaryReader;
-using Writer = ByteSerialization.IO.EndianBinaryWriter;
+using Reader = AKopetsch.IOHelper.EndianBinaryReader;
+using Writer = AKopetsch.IOHelper.EndianBinaryWriter;
 
 namespace ByteSerialization
 {

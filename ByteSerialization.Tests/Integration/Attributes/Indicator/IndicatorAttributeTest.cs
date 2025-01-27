@@ -1,6 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using ByteSerialization.IO;
+using AKopetsch.IOHelper;
 using ByteSerialization.Tests.Integration.Attributes.Indicator.TestObjects;
 using Xunit;
 using Xunit.Abstractions;

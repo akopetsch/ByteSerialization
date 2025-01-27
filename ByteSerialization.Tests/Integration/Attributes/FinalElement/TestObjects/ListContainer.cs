@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using AKopetsch.IOHelper;
 using ByteSerialization.Attributes;
-using ByteSerialization.IO;
 
 namespace ByteSerialization.Tests.Integration.Attributes.FinalElement.TestObjects
 {
